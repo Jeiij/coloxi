@@ -7,7 +7,7 @@ export default function UsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '', nombre_completo: '', rol_id: 1 });
 
-  const { data: users, isLoading } = useQuery({
+  const { data: usersResponse, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: async () => (await api.get('/usuarios')).data,
   });
@@ -67,7 +67,7 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {users?.map((u: any) => (
+              {usersResponse?.data?.map((u: any) => (
                 <tr key={u.id} className="hover:bg-blue-50/30 transition-colors">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{u.nombre_completo}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{u.email}</td>

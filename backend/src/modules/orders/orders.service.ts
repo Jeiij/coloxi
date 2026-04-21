@@ -48,8 +48,9 @@ export class OrdersService {
     const iva = ivaParam ? parseFloat(ivaParam.valor) : 19.0;
     const factor = factorParam ? parseFloat(factorParam.valor) : 1.4;
 
-    // Código único basado en timestamp
-    const codigo = `OC-${Date.now()}`;
+    // Código único basado en timestamp + sufijo aleatorio para evitar colisiones
+    const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
+    const codigo = `OC-${Date.now()}-${suffix}`;
 
     const order = await this.prisma.order.create({
       data: {
@@ -305,40 +306,39 @@ export class OrdersService {
       },
     });
 
-    // ✅ Si la orden se finaliza, actualizamos el inventario interno
+    // ✅ Si la orden se finaliza, actualizamos el inventario interno dentro de una transacción
     if (dto.estado === 'FINALIZADA') {
       this.logger.log(`Procesando entrada de inventario para orden ${orderId}...`);
-      
-      for (const item of updated.detalles) {
-        const qtyToSum = Number(item.cantidad);
-        
-        // Buscar o crear el registro en el inventario interno
-        const inventoryItem = await this.prisma.inventoryItem.findUnique({
-          where: { producto_id: item.producto_id }
-        });
 
-        if (inventoryItem) {
-          // Actualizar stock existente
-          await this.prisma.inventoryItem.update({
-            where: { id: inventoryItem.id },
-            data: { 
-              stock_actual: { increment: qtyToSum },
-              updated_at: new Date()
-            }
+      await this.prisma.$transaction(async (tx) => {
+        for (const item of updated.detalles) {
+          const qtyToSum = Number(item.cantidad);
+
+          // Buscar o crear el registro en el inventario interno
+          const inventoryItem = await tx.inventoryItem.findUnique({
+            where: { producto_id: item.producto_id },
           });
-          this.logger.log(`Stock actualizado para ${item.producto_codigo}: +${qtyToSum}`);
-        } else {
-          // Crear nuevo registro en inventario (Auto-Match sugerido)
-          await this.prisma.inventoryItem.create({
-            data: {
-              producto_id: item.producto_id,
-              stock_actual: qtyToSum,
-              stock_minimo: 0, // Por defecto 0, el jefe de compra lo ajustará luego
-            }
-          });
-          this.logger.log(`Nuevo ítem creado en inventario para ${item.producto_codigo} con stock: ${qtyToSum}`);
+
+          if (inventoryItem) {
+            // Actualizar stock existente
+            await tx.inventoryItem.update({
+              where: { id: inventoryItem.id },
+              data: { stock_actual: { increment: qtyToSum } },
+            });
+            this.logger.log(`Stock actualizado para ${item.producto_codigo}: +${qtyToSum}`);
+          } else {
+            // Crear nuevo registro en inventario (Auto-Match sugerido)
+            await tx.inventoryItem.create({
+              data: {
+                producto_id: item.producto_id,
+                stock_actual: qtyToSum,
+                stock_minimo: 0, // Por defecto 0, el jefe de compra lo ajustará luego
+              },
+            });
+            this.logger.log(`Nuevo ítem creado en inventario para ${item.producto_codigo} con stock: ${qtyToSum}`);
+          }
         }
-      }
+      });
     }
 
     return updated;

@@ -68,6 +68,7 @@ export class UpdateProductDto {
   @ApiPropertyOptional({ example: [1, 2] })
   @IsOptional()
   @IsArray()
+  @IsInt({ each: true })
   colores_ids?: number[];
 
   @ApiPropertyOptional()

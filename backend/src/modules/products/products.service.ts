@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -131,27 +131,29 @@ export class ProductsService {
   }
 
   async update(id: string, dto: UpdateProductDto, userId: string) {
-    const { colores_ids, ...productData } = dto;
-    
-    // Si envían array de colores, primero borramos los anteriores y luego insertamos los nuevos
-    if (colores_ids !== undefined) {
-      await this.prisma.colorOnProduct.deleteMany({
-        where: { producto_id: id }
-      });
-    }
+    const existing = await this.prisma.product.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException(`Producto con ID ${id} no encontrado`);
 
-    return this.prisma.product.update({
-      where: { id },
-      data: {
-        ...productData,
-        updated_by: userId,
-        updated_at: new Date(),
-        ...(colores_ids?.length && {
-          colores: {
-            create: colores_ids.map(colorId => ({ color_id: colorId }))
-          }
-        })
-      },
+    const { colores_ids, ...productData } = dto;
+
+    return this.prisma.$transaction(async (tx) => {
+      // Si envían array de colores, primero borramos los anteriores y luego insertamos los nuevos
+      if (colores_ids !== undefined) {
+        await tx.colorOnProduct.deleteMany({ where: { producto_id: id } });
+      }
+
+      return tx.product.update({
+        where: { id },
+        data: {
+          ...productData,
+          updated_by: userId,
+          ...(colores_ids?.length && {
+            colores: {
+              create: colores_ids.map((colorId) => ({ color_id: colorId })),
+            },
+          }),
+        },
+      });
     });
   }
 
@@ -164,7 +166,6 @@ export class ProductsService {
       data: { 
         activo: !product.activo,
         updated_by: userId,
-        updated_at: new Date()
       }
     });
   }

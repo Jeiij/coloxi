@@ -22,11 +22,18 @@ export class UsersService {
     });
   }
 
-  async findAll() {
-    return this.prisma.user.findMany({
-      include: { role: { select: { id: true, nombre: true } } },
-      orderBy: { created_at: 'desc' },
-    });
+  async findAll(page = 1, limit = 50) {
+    const skip = (page - 1) * limit;
+    const [total, users] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.user.findMany({
+        include: { role: { select: { id: true, nombre: true } } },
+        orderBy: { created_at: 'desc' },
+        skip,
+        take: limit,
+      }),
+    ]);
+    return { data: users, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async findAllRoles() {

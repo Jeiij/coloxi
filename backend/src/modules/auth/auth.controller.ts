@@ -1,9 +1,12 @@
 import { Controller, Request, Post, UseGuards, Body, Get, ForbiddenException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/auth.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -21,12 +24,16 @@ export class AuthController {
   }
 
   @Get('seed')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: '⚠️ SOLO DESARROLLO: Crear roles y usuario admin por defecto',
-    description: 'Crea los roles del sistema (Admin, Jefe de Compras, Vendedor) y el usuario admin@coloxi.com con contraseña Admin123!. Es seguro ejecutarlo múltiples veces. Bloqueado en producción.',
+    description: 'Requiere JWT de ADMIN. Crea los roles del sistema y el usuario admin@coloxi.com. Es seguro ejecutarlo múltiples veces. Bloqueado en producción.',
   })
   @ApiResponse({ status: 200, description: 'Seed ejecutado exitosamente.' })
-  @ApiResponse({ status: 403, description: 'No disponible en producción.' })
+  @ApiResponse({ status: 401, description: 'No autenticado.' })
+  @ApiResponse({ status: 403, description: 'No disponible en producción o rol insuficiente.' })
   async seed() {
     if (process.env.NODE_ENV === 'production') {
       throw new ForbiddenException('Seed no disponible en producción');

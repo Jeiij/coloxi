@@ -42,15 +42,13 @@ export class InventoryService {
       };
     }
 
-    // Filtrar stock bajo: stock_actual < stock_minimo
+    // Filtrar stock bajo: stock_actual < stock_minimo usando raw SQL para comparar columnas
     if (stock_bajo === true) {
-      where.AND = [
-        {
-          stock_actual: {
-            lt: Prisma.raw('stock_minimo') as any,
-          },
-        },
-      ];
+      const ids = await this.prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM inventario_interno
+        WHERE stock_actual > 0 AND stock_actual < stock_minimo
+      `;
+      where.id = { in: ids.map((r) => r.id) };
     }
 
     // Determinar ordenamiento
@@ -191,25 +189,23 @@ export class InventoryService {
   }
 
   /**
-   * Obtener estadísticas del inventario interno (para KPIs del dashboard).
+   * Obtener estadísticas del inventario interno usando agregaciones SQL.
    */
   async getStats() {
-    const [total, items] = await Promise.all([
-      this.prisma.inventoryItem.count(),
-      this.prisma.inventoryItem.findMany({
-        select: { stock_actual: true, stock_minimo: true },
-      }),
-    ]);
+    const result = await this.prisma.$queryRaw<
+      { total_items: bigint; stock_bajo: bigint; agotados: bigint }[]
+    >`
+      SELECT
+        COUNT(*)                                                          AS total_items,
+        COUNT(*) FILTER (WHERE stock_actual > 0 AND stock_actual < stock_minimo) AS stock_bajo,
+        COUNT(*) FILTER (WHERE stock_actual <= 0)                        AS agotados
+      FROM inventario_interno
+    `;
 
-    let stockBajo = 0;
-    let agotados = 0;
-
-    for (const item of items) {
-      const stock = Number(item.stock_actual);
-      const minimo = Number(item.stock_minimo);
-      if (stock <= 0) agotados++;
-      else if (stock < minimo) stockBajo++;
-    }
+    const row = result[0];
+    const total = Number(row.total_items);
+    const stockBajo = Number(row.stock_bajo);
+    const agotados = Number(row.agotados);
 
     return {
       total_items: total,

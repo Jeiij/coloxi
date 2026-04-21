@@ -26,6 +26,7 @@ import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorator';
+import { AuthenticatedUser } from '../auth/interfaces/auth.interfaces';
 
 @ApiTags('Órdenes de Compra')
 @ApiBearerAuth('JWT-auth')
@@ -38,7 +39,7 @@ export class OrdersController {
   @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
   @ApiOperation({ summary: 'Crear una nueva orden de compra en BORRADOR' })
   @ApiResponse({ status: 201, description: 'Orden creada exitosamente' })
-  create(@Body() dto: CreateOrderDto, @Request() req: any) {
+  create(@Body() dto: CreateOrderDto, @Request() req: { user: AuthenticatedUser }) {
     return this.ordersService.create(dto, req.user.userId);
   }
 
@@ -54,7 +55,7 @@ export class OrdersController {
   @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
   @ApiOperation({ summary: 'Detalle de orden con ítems (oculta ganancias si JEFE_COMPRA)' })
   @ApiParam({ name: 'id', description: 'UUID de la orden' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @Request() req: any) {
+  findOne(@Param('id', ParseUUIDPipe) id: string, @Request() req: { user: AuthenticatedUser }) {
     return this.ordersService.findOne(id, req.user.role);
   }
 
@@ -83,21 +84,21 @@ export class OrdersController {
   }
 
   @Patch(':id/estado')
-  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @Roles('ADMIN', 'GERENTE')
   @ApiOperation({ summary: 'Aprobar/finalizar orden (solo ADMIN y GERENTE)' })
   @ApiParam({ name: 'id', description: 'UUID de la orden' })
   @ApiResponse({ status: 403, description: 'Solo ADMIN y GERENTE pueden cambiar estado' })
   updateStatus(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateOrderStatusDto,
-    @Request() req: any,
+    @Request() req: { user: AuthenticatedUser },
   ) {
     return this.ordersService.updateStatus(id, dto, req.user.userId);
   }
 
   @Delete(':id')
-  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
-  @ApiOperation({ summary: 'Eliminar una orden completa (solo BORRADOR)' })
+  @Roles('ADMIN', 'GERENTE')
+  @ApiOperation({ summary: 'Eliminar una orden completa (solo BORRADOR, solo ADMIN/GERENTE)' })
   @ApiParam({ name: 'id', description: 'UUID de la orden a eliminar' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.ordersService.remove(id);

@@ -10,9 +10,9 @@ async function bootstrap() {
   // Prefijo global para todas las rutas de la API, exceptuando Swagger
   app.setGlobalPrefix('api', { exclude: ['api-docs', 'api-docs-json'] });
 
-  // Habilitar CORS para el frontend (Vite)
+  // Habilitar CORS — origen configurable por variable de entorno
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

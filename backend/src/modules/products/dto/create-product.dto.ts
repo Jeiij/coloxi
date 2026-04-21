@@ -66,6 +66,7 @@ export class CreateProductDto {
   @ApiPropertyOptional({ example: [1, 2, 3], description: 'IDs de colores disponibles' })
   @IsOptional()
   @IsArray()
+  @IsInt({ each: true })
   colores_ids?: number[];
 
   @ApiPropertyOptional()

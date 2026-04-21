@@ -8,6 +8,7 @@ import { ProductListItemDto, ProductDetailDto } from './dto/product-response.dto
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorator';
+import { AuthenticatedUser } from '../auth/interfaces/auth.interfaces';
 
 @ApiTags('Maestro de Productos')
 @ApiBearerAuth('JWT-auth')
@@ -37,7 +38,7 @@ export class ProductsController {
   @Post()
   @Roles('ADMIN', 'GERENTE')
   @ApiOperation({ summary: 'Crear un nuevo producto (ADMIN/GERENTE)' })
-  create(@Body() dto: CreateProductDto, @Request() req: any) {
+  create(@Body() dto: CreateProductDto, @Request() req: { user: AuthenticatedUser }) {
     return this.productsService.create(dto, req.user.userId);
   }
 
@@ -45,7 +46,7 @@ export class ProductsController {
   @Roles('ADMIN', 'GERENTE')
   @ApiOperation({ summary: 'Actualizar producto' })
   @ApiParam({ name: 'id', description: 'UUID del producto' })
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateProductDto, @Request() req: any) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateProductDto, @Request() req: { user: AuthenticatedUser }) {
     return this.productsService.update(id, dto, req.user.userId);
   }
 
@@ -53,7 +54,7 @@ export class ProductsController {
   @Roles('ADMIN', 'GERENTE')
   @ApiOperation({ summary: 'Activar/Desactivar producto (ADMIN/GERENTE)' })
   @ApiParam({ name: 'id', description: 'UUID del producto' })
-  toggleActive(@Param('id', ParseUUIDPipe) id: string, @Request() req: any) {
+  toggleActive(@Param('id', ParseUUIDPipe) id: string, @Request() req: { user: AuthenticatedUser }) {
     return this.productsService.toggleActive(id, req.user.userId);
   }
 }

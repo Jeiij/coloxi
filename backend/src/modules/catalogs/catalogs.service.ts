@@ -1,9 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CatalogsService {
   constructor(private prisma: PrismaService) {}
+
+  private handleDeleteError(error: unknown, entity: string): never {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2003'
+    ) {
+      throw new BadRequestException(
+        `No se puede eliminar ${entity} porque está siendo usado por uno o más productos`,
+      );
+    }
+    throw error;
+  }
 
   // ===== CATEGORÍAS =====
   async findAllCategories() {
@@ -16,7 +29,11 @@ export class CatalogsService {
     return this.prisma.category.update({ where: { id }, data: { nombre } });
   }
   async deleteCategory(id: number) {
-    return this.prisma.category.delete({ where: { id } });
+    try {
+      return await this.prisma.category.delete({ where: { id } });
+    } catch (error) {
+      this.handleDeleteError(error, 'la categoría');
+    }
   }
 
   // ===== LÍNEAS =====
@@ -30,7 +47,11 @@ export class CatalogsService {
     return this.prisma.line.update({ where: { id }, data: { nombre } });
   }
   async deleteLine(id: number) {
-    return this.prisma.line.delete({ where: { id } });
+    try {
+      return await this.prisma.line.delete({ where: { id } });
+    } catch (error) {
+      this.handleDeleteError(error, 'la línea');
+    }
   }
 
   // ===== MARCAS =====
@@ -44,7 +65,11 @@ export class CatalogsService {
     return this.prisma.brand.update({ where: { id }, data: { nombre } });
   }
   async deleteBrand(id: number) {
-    return this.prisma.brand.delete({ where: { id } });
+    try {
+      return await this.prisma.brand.delete({ where: { id } });
+    } catch (error) {
+      this.handleDeleteError(error, 'la marca');
+    }
   }
 
   // ===== COLORES =====
@@ -58,6 +83,10 @@ export class CatalogsService {
     return this.prisma.color.update({ where: { id }, data: { nombre, codigo_hex } });
   }
   async deleteColor(id: number) {
-    return this.prisma.color.delete({ where: { id } });
+    try {
+      return await this.prisma.color.delete({ where: { id } });
+    } catch (error) {
+      this.handleDeleteError(error, 'el color');
+    }
   }
 }

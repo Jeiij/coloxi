@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { productApi } from '../products/productApi';
 import { orderApi } from '../orders/orderApi';
 import { useAuthStore } from '../../stores/authStore';
@@ -37,21 +38,21 @@ export default function DashboardPage() {
       <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <h2 className="text-lg font-semibold mb-4">Accesos Rápidos</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <a href="/productos" className="block p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
+          <Link to="/productos" className="block p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
             <span className="text-lg">📦</span>
             <p className="font-medium mt-2">Ver Productos</p>
             <p className="text-xs text-gray-500">Consultar inventario y precios</p>
-          </a>
-          <a href="/ordenes" className="block p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
+          </Link>
+          <Link to="/ordenes" className="block p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
             <span className="text-lg">📋</span>
             <p className="font-medium mt-2">Ver Órdenes</p>
             <p className="text-xs text-gray-500">Gestionar órdenes de compra</p>
-          </a>
-          <a href="/ordenes/nueva" className="block p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
+          </Link>
+          <Link to="/ordenes/nueva" className="block p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
             <span className="text-lg">➕</span>
             <p className="font-medium mt-2">Nueva Orden</p>
             <p className="text-xs text-gray-500">Crear una orden de compra</p>
-          </a>
+          </Link>
         </div>
       </div>
     </div>
