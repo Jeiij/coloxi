@@ -12,7 +12,7 @@ export class CatalogsService {
       error.code === 'P2003'
     ) {
       throw new BadRequestException(
-        `No se puede eliminar ${entity} porque está siendo usado por uno o más productos`,
+        `No se puede eliminar ${entity} porque está siendo referenciado por otros registros del sistema`,
       );
     }
     throw error;

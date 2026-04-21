@@ -42,13 +42,19 @@ export class InventoryService {
       };
     }
 
-    // Filtrar stock bajo: stock_actual < stock_minimo usando raw SQL para comparar columnas
+    // Filtrar stock bajo: stock_actual < stock_minimo
+    // Usamos una subquery para comparar dos columnas sin un round-trip adicional
     if (stock_bajo === true) {
-      const ids = await this.prisma.$queryRaw<{ id: string }[]>`
-        SELECT id FROM inventario_interno
-        WHERE stock_actual > 0 AND stock_actual < stock_minimo
-      `;
-      where.id = { in: ids.map((r) => r.id) };
+      where.AND = [
+        {
+          id: {
+            in: await this.prisma.$queryRaw<{ id: string }[]>`
+              SELECT id FROM inventario_interno
+              WHERE stock_actual > 0 AND stock_actual < stock_minimo
+            `.then((rows) => rows.map((r) => r.id)),
+          },
+        },
+      ];
     }
 
     // Determinar ordenamiento
