@@ -1,0 +1,27 @@
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v5.4.21  ready in 249 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+13:58:31 [vite] hmr update /src/features/products/ProductListPage.tsx, /src/index.css
+13:59:05 [vite] hmr update /src/features/products/ProductFormPage.tsx, /src/index.css
+13:59:18 [vite] hmr update /src/features/products/ProductFormPage.tsx, /src/index.css
+14:00:00 [vite] hmr update /src/features/products/ProductListPage.tsx, /src/index.css
+14:02:04 [vite] hmr update /src/components/layout/Sidebar.tsx, /src/index.css
+14:03:53 [vite] hmr update /src/features/orders/OrderDetailPage.tsx, /src/index.css
+14:04:09 [vite] hmr update /src/features/products/components/ProductSlideOver.tsx, /src/index.css
+14:15:05 [vite] page reload src/types/index.ts
+14:16:26 [vite] hmr update /src/features/dashboard/DashboardJefeCompra.tsx, /src/index.css
+14:17:13 [vite] hmr update /src/features/dashboard/PlanificadorComprasPage.tsx, /src/index.css
+14:17:34 [vite] hmr update /src/features/products/components/ProductSlideOver.tsx, /src/index.css
+14:17:54 [vite] hmr update /src/features/products/components/ProductSlideOver.tsx, /src/index.css
+14:18:51 [vite] hmr update /src/features/products/components/ProductSlideOver.tsx, /src/index.css
+14:30:23 [vite] hmr update /src/features/orders/OrderDetailPage.tsx, /src/index.css
+14:51:32 [vite] page reload src/types/index.ts
+14:51:48 [vite] hmr update /src/features/orders/OrderDetailPage.tsx, /src/index.css
+14:56:30 [vite] hmr update /src/features/orders/OrderDetailPage.tsx, /src/index.css
+15:46:59 [vite] hmr update /src/features/catalogs/CatalogsPage.tsx, /src/index.css
