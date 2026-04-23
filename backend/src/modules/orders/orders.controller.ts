@@ -1,0 +1,126 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Patch,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  ParseUUIDPipe,
+  Request,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
+import { OrdersService } from './orders.service';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { AddOrderItemDto } from './dto/add-order-item.dto';
+import { QueryOrdersDto } from './dto/query-orders.dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/auth.decorator';
+
+@ApiTags('Órdenes de Compra')
+@ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Controller('ordenes')
+export class OrdersController {
+  constructor(private readonly ordersService: OrdersService) {}
+
+  @Post()
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Crear una nueva orden de compra en BORRADOR' })
+  @ApiResponse({ status: 201, description: 'Orden creada exitosamente' })
+  create(@Body() dto: CreateOrderDto, @Request() req: any) {
+    return this.ordersService.create(dto, req.user.userId);
+  }
+
+  @Get()
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Listar órdenes paginadas con filtros (Borradores privados)' })
+  @ApiResponse({ status: 200, description: 'Listado de órdenes' })
+  findAll(@Query() query: QueryOrdersDto, @Request() req: any) {
+    return this.ordersService.findAll(query, req.user.userId);
+  }
+
+  @Get('pendientes/count')
+  @Roles('ADMIN', 'GERENTE')
+  @ApiOperation({ summary: 'Obtener contador de órdenes pendientes' })
+  getPendingCount() {
+    return this.ordersService.getPendingCount();
+  }
+
+  @Get(':id')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Detalle de orden con ítems (oculta ganancias si JEFE_COMPRA, borradores privados)' })
+  @ApiParam({ name: 'id', description: 'UUID de la orden' })
+  findOne(@Param('id', ParseUUIDPipe) id: string, @Request() req: any) {
+    return this.ordersService.findOne(id, req.user.role, req.user.userId);
+  }
+
+  @Patch(':id')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Actualizar notas/observaciones de la orden' })
+  @ApiParam({ name: 'id', description: 'UUID de la orden' })
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: { observaciones: string },
+    @Request() req: any,
+  ) {
+    return this.ordersService.update(id, dto.observaciones, req.user.userId);
+  }
+
+  @Post(':id/items')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Agregar ítem a una orden (snapshot del producto)' })
+  @ApiParam({ name: 'id', description: 'UUID de la orden' })
+  @ApiResponse({ status: 400, description: 'La orden no está en BORRADOR' })
+  addItem(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AddOrderItemDto,
+    @Request() req: any,
+  ) {
+    return this.ordersService.addItem(id, dto, req.user.userId);
+  }
+
+  @Delete(':id/items/:itemId')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Eliminar ítem de una orden (solo en BORRADOR)' })
+  @ApiParam({ name: 'id', description: 'UUID de la orden' })
+  @ApiParam({ name: 'itemId', description: 'UUID del ítem' })
+  removeItem(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('itemId', ParseUUIDPipe) itemId: string,
+    @Request() req: any,
+  ) {
+    return this.ordersService.removeItem(id, itemId, req.user.userId);
+  }
+
+  @Patch(':id/estado')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Aprobar/finalizar orden (solo ADMIN y GERENTE)' })
+  @ApiParam({ name: 'id', description: 'UUID de la orden' })
+  @ApiResponse({ status: 403, description: 'Solo ADMIN y GERENTE pueden cambiar estado' })
+  updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateOrderStatusDto,
+    @Request() req: any,
+  ) {
+    return this.ordersService.updateStatus(id, dto, req.user.userId);
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
+  @ApiOperation({ summary: 'Eliminar una orden completa (solo BORRADOR)' })
+  @ApiParam({ name: 'id', description: 'UUID de la orden a eliminar' })
+  remove(@Param('id', ParseUUIDPipe) id: string, @Request() req: any) {
+    return this.ordersService.remove(id, req.user.userId);
+  }
+}

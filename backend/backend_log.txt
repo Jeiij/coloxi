@@ -1,0 +1,407 @@
+
+> backend@0.0.1 start:dev
+> nest start --watch
+
+[2J[3J[H[[90m13:55:39[0m] Starting compilation in watch mode...
+
+[[90m13:55:43[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +38ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCatalogsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrdersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSettingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +10ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/seed, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/usuarios}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios/roles, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/api/productos}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos/:id/estado, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogsController {/api}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrdersController {/api/ordenes}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id/items, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id/items/:itemId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id/estado, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSettingsController {/api/parametros}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/parametros, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/parametros/:clave, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[PrismaService] [39m[32m✅ Conectado a la Base de Datos PostgreSQL de COLOXI con éxito![39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:55:44 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +3ms[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:58:20 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden 73086b35-0029-48bb-831c-39732c20b308 eliminada correctamente[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:58:23 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden 297511b4-5dde-486d-9eba-2e59ce842811 eliminada correctamente[39m
+[32m[Nest] 16400  - [39m21/04/2026, 13:59:09 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776794349254 creada por usuario 01e8df61-9d0c-42bf-aeba-4f23886bcad9[39m
+[32m[Nest] 16400  - [39m21/04/2026, 14:00:02 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 4f682e06-5cfd-4f3c-85b6-f9ecfcddf145 agregado a orden b86f0aa6-75b5-4516-acfa-270c8289d5b6 (Producto: SUPER5-GAL-BL, Color: Blanco)[39m
+[32m[Nest] 16400  - [39m21/04/2026, 14:02:37 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden b86f0aa6-75b5-4516-acfa-270c8289d5b6 eliminada correctamente[39m
+[2J[3J[H[[90m14:09:56[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[96msrc/modules/products/products.service.ts[0m:[93m44[0m:[93m50[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'ProductWhereInput'.
+
+[7m44[0m     if (en_catalogo_empresa !== undefined) where.en_catalogo_empresa = en_catalogo_empresa;
+[7m  [0m [91m                                                 ~~~~~~~~~~~~~~~~~~~[0m
+
+[[90m14:09:57[0m] Found 2 errors. Watching for file changes.
+
+[2J[3J[H[[90m14:09:57[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[96msrc/modules/products/products.service.ts[0m:[93m44[0m:[93m50[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'ProductWhereInput'.
+
+[7m44[0m     if (en_catalogo_empresa !== undefined) where.en_catalogo_empresa = en_catalogo_empresa;
+[7m  [0m [91m                                                 ~~~~~~~~~~~~~~~~~~~[0m
+
+[[90m14:09:58[0m] Found 2 errors. Watching for file changes.
+
+[2J[3J[H[[90m14:10:18[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[96msrc/modules/products/products.service.ts[0m:[93m44[0m:[93m50[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'ProductWhereInput'.
+
+[7m44[0m     if (en_catalogo_empresa !== undefined) where.en_catalogo_empresa = en_catalogo_empresa;
+[7m  [0m [91m                                                 ~~~~~~~~~~~~~~~~~~~[0m
+
+[[90m14:10:18[0m] Found 2 errors. Watching for file changes.
+
+[2J[3J[H[[90m14:10:30[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[96msrc/modules/products/products.service.ts[0m:[93m44[0m:[93m50[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'ProductWhereInput'.
+
+[7m44[0m     if (en_catalogo_empresa !== undefined) where.en_catalogo_empresa = en_catalogo_empresa;
+[7m  [0m [91m                                                 ~~~~~~~~~~~~~~~~~~~[0m
+
+[[90m14:10:31[0m] Found 2 errors. Watching for file changes.
+
+[2J[3J[H[[90m14:10:45[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[96msrc/modules/products/products.service.ts[0m:[93m44[0m:[93m50[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'ProductWhereInput'.
+
+[7m44[0m     if (en_catalogo_empresa !== undefined) where.en_catalogo_empresa = en_catalogo_empresa;
+[7m  [0m [91m                                                 ~~~~~~~~~~~~~~~~~~~[0m
+
+[[90m14:10:46[0m] Found 2 errors. Watching for file changes.
+
+[2J[3J[H[[90m14:11:03[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[96msrc/modules/products/products.service.ts[0m:[93m22[0m:[93m7[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'QueryProductsDto'.
+
+[7m22[0m       en_catalogo_empresa,
+[7m  [0m [91m      ~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/modules/products/products.service.ts[0m:[93m44[0m:[93m50[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'ProductWhereInput'.
+
+[7m44[0m     if (en_catalogo_empresa !== undefined) where.en_catalogo_empresa = en_catalogo_empresa;
+[7m  [0m [91m                                                 ~~~~~~~~~~~~~~~~~~~[0m
+
+[[90m14:11:03[0m] Found 3 errors. Watching for file changes.
+
+[2J[3J[H[[90m14:11:17[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[96msrc/modules/products/products.service.ts[0m:[93m22[0m:[93m7[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'QueryProductsDto'.
+
+[7m22[0m       en_catalogo_empresa,
+[7m  [0m [91m      ~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/modules/products/products.service.ts[0m:[93m44[0m:[93m50[0m - [91merror[0m[90m TS2339: [0mProperty 'en_catalogo_empresa' does not exist on type 'ProductWhereInput'.
+
+[7m44[0m     if (en_catalogo_empresa !== undefined) where.en_catalogo_empresa = en_catalogo_empresa;
+[7m  [0m [91m                                                 ~~~~~~~~~~~~~~~~~~~[0m
+
+[[90m14:11:17[0m] Found 3 errors. Watching for file changes.
+
+[2J[3J[H[[90m14:11:53[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[[90m14:11:53[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m14:12:09[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[[90m14:12:09[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m14:12:19[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[[90m14:12:19[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m14:12:45[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[[90m14:12:46[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m14:13:03[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[[90m14:13:03[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m14:13:12[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[[90m14:13:12[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m14:13:26[0m] File change detected. Starting incremental compilation...
+
+[96msrc/modules/auth/auth.service.ts[0m:[93m149[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'stock_actual' does not exist in type 'Without<ProductCreateInput, ProductUncheckedCreateInput> & ProductUncheckedCreateInput'.
+
+[7m149[0m           stock_actual: 150.00,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m10205[0m:[93m5[0m
+    [7m10205[0m     data: XOR<ProductCreateInput, ProductUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: ProductSelect<DefaultArgs> | null | undefined; include?: ProductInclude<DefaultArgs> | null | undefined; data: (Without<...> & ProductUncheckedCreateInput) | (Without<...> & ProductCreateInput); }'
+
+[[90m14:13:27[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m14:14:19[0m] File change detected. Starting incremental compilation...
+
+[[90m14:14:19[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +29ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mInventoryModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCatalogsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrdersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSettingsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +9ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/seed, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/usuarios}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios/roles, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/usuarios/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/api/productos}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/productos/:id/estado, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogsController {/api}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/categorias/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lineas/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/marcas/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/colores/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrdersController {/api/ordenes}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id/items, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id/items/:itemId, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id/estado, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ordenes/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSettingsController {/api/parametros}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/parametros, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/parametros/:clave, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mInventoryController {/api/inventario}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/inventario, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/inventario/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/inventario, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/inventario/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/inventario/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[PrismaService] [39m[32m✅ Conectado a la Base de Datos PostgreSQL de COLOXI con éxito![39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:14:20 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +2ms[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:15:31 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 3f4f6315-cf96-4a5a-bf7d-18ada1a3aad2 agregado a orden babab613-19b9-49fe-9bd8-6bfb2a39ebec (Producto: SUPER5-GAL-BL, Color: Blanco)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:26:27 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776795987302 creada por usuario 01e8df61-9d0c-42bf-aeba-4f23886bcad9[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:26:38 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden 0512c917-f0f6-4c6a-b306-bbfa2073a3b3 eliminada correctamente[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:31:25 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 58bba095-07a2-420c-9050-e2094969a769 agregado a orden babab613-19b9-49fe-9bd8-6bfb2a39ebec (Producto: ALKYD-025-CL, Color: Azul)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:33:26 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776793725151 cambió de BORRADOR a ENVIADA por usuario 92fd2ff4-ce62-4051-8571-db8efbeb2aee[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:33:36 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776793725151 cambió de ENVIADA a FINALIZADA por usuario 92fd2ff4-ce62-4051-8571-db8efbeb2aee[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:42:36 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776796956745 creada por usuario 01e8df61-9d0c-42bf-aeba-4f23886bcad9[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:42:46 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 44e6c572-83ba-4c90-bd96-3cd13e5eac71 agregado a orden de3e6fa2-d5ad-49b2-93db-e14f47d028c5 (Producto: ANDEZ-1GL-COLOR, Color: Gris)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:44:13 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 47d2b418-dbf4-4a81-81fd-68acd9bfd722 agregado a orden de3e6fa2-d5ad-49b2-93db-e14f47d028c5 (Producto: SUPER5-GAL-BL, Color: Blanco)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:44:15 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 44e6c572-83ba-4c90-bd96-3cd13e5eac71 eliminado de orden de3e6fa2-d5ad-49b2-93db-e14f47d028c5[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:45:34 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776797134263 creada por usuario 01e8df61-9d0c-42bf-aeba-4f23886bcad9[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:51:27 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem da82988f-0142-4b0a-8add-441e3c7df088 agregado a orden 3bc204cd-f2c0-454c-aa86-08f6ee624cdd (Producto: ALKYD-1GL-CL, Color: Negro)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:53:06 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 65f5b79b-745f-410c-90d8-634eba9f4a1b agregado a orden 3bc204cd-f2c0-454c-aa86-08f6ee624cdd (Producto: SUPER5-GAL-BL, Color: Blanco)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:53:10 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem da82988f-0142-4b0a-8add-441e3c7df088 eliminado de orden 3bc204cd-f2c0-454c-aa86-08f6ee624cdd[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:53:19 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 65f5b79b-745f-410c-90d8-634eba9f4a1b eliminado de orden 3bc204cd-f2c0-454c-aa86-08f6ee624cdd[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:53:32 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 3351ca49-226a-45bc-8efe-eb62ecf256d5 agregado a orden 3bc204cd-f2c0-454c-aa86-08f6ee624cdd (Producto: SUPER5-GAL-BL, Color: Blanco)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 14:58:06 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden 3bc204cd-f2c0-454c-aa86-08f6ee624cdd eliminada correctamente[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:02:40 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 47d2b418-dbf4-4a81-81fd-68acd9bfd722 eliminado de orden de3e6fa2-d5ad-49b2-93db-e14f47d028c5[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:02:51 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 3d380d8c-2d61-430d-9761-d082064911ab agregado a orden de3e6fa2-d5ad-49b2-93db-e14f47d028c5 (Producto: SUPER5-GAL-BL, Color: Blanco)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:11:47 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776798707513 creada por usuario 01e8df61-9d0c-42bf-aeba-4f23886bcad9[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:11:47 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem 73ccff21-0e9f-4362-84e9-11b572d6ac6a agregado a orden 6be134f8-dabd-418f-8dd7-18acecdf78e0 (Producto: ALKYD-1GL-CL, Color: Beige)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:11:47 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem a7c3e8ac-eec4-4a02-80ac-21bd5ce4e9d2 agregado a orden 6be134f8-dabd-418f-8dd7-18acecdf78e0 (Producto: ALKYD-1GL-OS, Color: Azul)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:13:17 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden 6be134f8-dabd-418f-8dd7-18acecdf78e0 eliminada correctamente[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:13:22 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden OC-1776798802469 creada por usuario 01e8df61-9d0c-42bf-aeba-4f23886bcad9[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:13:40 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mÍtem def6c8bb-de1e-4b18-990b-c787ef7d8b89 agregado a orden 38003dcd-9f1d-4007-88aa-5fae806fcca8 (Producto: GLAM-1GL-CLARO, Color: Gris)[39m
+[32m[Nest] 17643  - [39m21/04/2026, 15:25:39 [32m    LOG[39m [38;5;3m[OrdersService] [39m[32mOrden 38003dcd-9f1d-4007-88aa-5fae806fcca8 eliminada correctamente[39m

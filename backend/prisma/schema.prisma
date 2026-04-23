@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique @db.VarChar(50)
+  descripcion String?
+  users       User[]
+
+  @@map("roles")
+}
+
+model User {
+  id               String            @id @default(uuid()) @db.Uuid
+  rol_id           Int
+  email            String            @unique @db.VarChar(150)
+  password_hash    String            @db.VarChar(255)
+  nombre_completo  String            @db.VarChar(200)
+  activo           Boolean           @default(true)
+  created_at       DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  audits           Audit[]           @relation("user_audits")
+  orders           Order[]           @relation("orders_created_by")
+  system_params    SystemParameter[] @relation("params_updated_by")
+  created_products Product[]         @relation("products_created_by")
+  updated_products Product[]         @relation("products_updated_by")
+  role             Role              @relation(fields: [rol_id], references: [id])
+
+  @@map("usuarios")
+}
+
+model SystemParameter {
+  id          Int      @id @default(autoincrement())
+  clave       String   @unique @db.VarChar(80)
+  valor       String   @db.VarChar(255)
+  descripcion String?
+  updated_by  String?  @db.Uuid
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  user        User?    @relation("params_updated_by", fields: [updated_by], references: [id])
+
+  @@map("parametros_sistema")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @unique @db.VarChar(100)
+  productos Product[]
+
+  @@map("categorias")
+}
+
+model Line {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @unique @db.VarChar(100)
+  productos Product[]
+
+  @@map("lineas")
+}
+
+model Brand {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @unique @db.VarChar(100)
+  productos Product[]
+
+  @@map("marcas")
+}
+
+model Color {
+  id         Int              @id @default(autoincrement())
+  nombre     String           @unique @db.VarChar(60)
+  codigo_hex String?          @db.VarChar(7)
+  productos  ColorOnProduct[]
+
+  @@map("colores")
+}
+
+model Product {
+  id                     String           @id @default(uuid()) @db.Uuid
+  codigo                 String           @unique @db.VarChar(50)
+  nombre                 String           @db.VarChar(200)
+  nombre_corto           String?          @db.VarChar(120)
+  categoria_id           Int?
+  linea_id               Int?
+  marca_id               Int?
+  presentacion           String           @db.VarChar(50)
+  capacidad_gal          Decimal          @default(0) @db.Decimal(12, 2)
+  equivalencia_kg        Decimal          @default(0) @db.Decimal(12, 2)
+  costo_unitario_sin_iva Decimal          @default(0) @db.Decimal(14, 4)
+  pvp_colombia           Decimal          @default(0) @db.Decimal(14, 4)
+  pvp_venezuela          Decimal          @default(0) @db.Decimal(14, 4)
+  factor_venezuela       Decimal          @default(1.40) @db.Decimal(10, 4)
+  activo                 Boolean          @default(true)
+  observaciones          String?
+  created_by             String?          @db.Uuid
+  updated_by             String?          @db.Uuid
+  created_at             DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  colores                ColorOnProduct[]
+  detalle_ordenes        OrderDetail[]
+  imagenes               ProductImage[]
+  inventory_item         InventoryItem?
+  categoria              Category?        @relation(fields: [categoria_id], references: [id], onDelete: Restrict)
+  creator                User?            @relation("products_created_by", fields: [created_by], references: [id])
+  linea                  Line?            @relation(fields: [linea_id], references: [id], onDelete: Restrict)
+  marca                  Brand?           @relation(fields: [marca_id], references: [id], onDelete: Restrict)
+  updater                User?            @relation("products_updated_by", fields: [updated_by], references: [id])
+
+  @@map("productos")
+}
+
+model ProductImage {
+  id           String   @id @default(uuid()) @db.Uuid
+  producto_id  String   @db.Uuid
+  url_imagen   String
+  es_principal Boolean  @default(false)
+  orden_visual Int      @default(1)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  file_size    Int?
+  mime_type    String?  @db.VarChar(50)
+  producto     Product  @relation(fields: [producto_id], references: [id], onDelete: Cascade)
+
+  @@map("producto_imagenes")
+}
+
+model ColorOnProduct {
+  producto_id String  @db.Uuid
+  color_id    Int
+  color       Color   @relation(fields: [color_id], references: [id], onDelete: Cascade)
+  producto    Product @relation(fields: [producto_id], references: [id], onDelete: Cascade)
+
+  @@id([producto_id, color_id])
+  @@map("colores_por_producto")
+}
+
+model InventoryItem {
+  id           String   @id @default(uuid()) @db.Uuid
+  producto_id  String   @unique @db.Uuid
+  stock_actual Decimal  @default(0) @db.Decimal(14, 2)
+  stock_minimo Decimal  @default(0) @db.Decimal(14, 2)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  producto     Product  @relation(fields: [producto_id], references: [id], onDelete: Cascade)
+
+  @@map("inventario_interno")
+}
+
+
+model Order {
+  id               String        @id @default(uuid()) @db.Uuid
+  codigo           String        @unique @db.VarChar(50)
+  fecha            DateTime      @default(dbgenerated("CURRENT_DATE")) @db.Date
+  estado           String        @default("BORRADOR") @db.VarChar(20)
+  mercado          String        @default("AMBOS") @db.VarChar(20)
+  observaciones    String?
+  iva_porcentaje   Decimal       @default(19.00) @db.Decimal(5, 2)
+  factor_venezuela Decimal       @default(1.40) @db.Decimal(10, 4)
+  created_by       String?       @db.Uuid
+  created_at       DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  detalles         OrderDetail[]
+  creator          User?         @relation("orders_created_by", fields: [created_by], references: [id])
+
+  @@map("ordenes_compra")
+}
+
+model OrderDetail {
+  id                          String   @id @default(uuid()) @db.Uuid
+  orden_compra_id             String   @db.Uuid
+  producto_id                 String   @db.Uuid
+  producto_codigo             String   @db.VarChar(50)
+  producto_nombre             String   @db.VarChar(200)
+  presentacion                String   @db.VarChar(50)
+  capacidad_gal               Decimal  @db.Decimal(12, 2)
+  equivalencia_kg             Decimal  @db.Decimal(12, 2)
+  cantidad                    Decimal  @db.Decimal(14, 2)
+  total_galones               Decimal  @db.Decimal(14, 2)
+  total_kgs                   Decimal  @db.Decimal(14, 2)
+  costo_unitario_sin_iva      Decimal  @db.Decimal(14, 4)
+  costo_total_sin_iva         Decimal  @db.Decimal(14, 4)
+  costo_unitario_con_iva      Decimal  @db.Decimal(14, 4)
+  costo_total_con_iva         Decimal  @db.Decimal(14, 4)
+  pvp_colombia_unitario       Decimal  @db.Decimal(14, 4)
+  pvp_colombia_total          Decimal  @db.Decimal(14, 4)
+  ganancia_colombia_unitaria  Decimal  @db.Decimal(14, 4)
+  ganancia_colombia_total     Decimal  @db.Decimal(14, 4)
+  ganancia_colombia_neta_unitaria Decimal @default(0) @db.Decimal(14, 4)
+  ganancia_colombia_neta_total    Decimal @default(0) @db.Decimal(14, 4)
+  margen_colombia_porcentaje  Decimal? @db.Decimal(8, 2)
+  costo_ajustado_venezuela    Decimal  @default(0) @db.Decimal(14, 4)
+  pvp_venezuela_unitario      Decimal  @db.Decimal(14, 4)
+  pvp_venezuela_total         Decimal  @db.Decimal(14, 4)
+  ganancia_venezuela_unitaria Decimal  @db.Decimal(14, 4)
+  ganancia_venezuela_total    Decimal  @db.Decimal(14, 4)
+  foto_url                    String?
+  created_at                  DateTime @default(now()) @db.Timestamptz(6)
+  color_nombre                String   @db.VarChar(60)
+  orden_compra                Order    @relation(fields: [orden_compra_id], references: [id], onDelete: Cascade)
+  producto                    Product  @relation(fields: [producto_id], references: [id])
+
+  @@map("orden_compra_detalle")
+}
+
+model Audit {
+  id               BigInt   @id @default(autoincrement())
+  usuario_id       String?  @db.Uuid
+  tabla            String   @db.VarChar(100)
+  registro_id_uuid String?  @db.Uuid
+  registro_id_int  Int?
+  accion           String   @db.VarChar(20)
+  campo            String?  @db.VarChar(100)
+  valor_anterior   String?
+  valor_nuevo      String?
+  ip_origen        String?  @db.VarChar(50)
+  fecha            DateTime @default(now()) @db.Timestamptz(6)
+  user             User?    @relation("user_audits", fields: [usuario_id], references: [id])
+
+  @@map("auditoria")
+}
