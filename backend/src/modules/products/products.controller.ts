@@ -35,14 +35,14 @@ export class ProductsController {
   }
 
   @Post()
-  @Roles('ADMIN', 'GERENTE')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
   @ApiOperation({ summary: 'Crear un nuevo producto (ADMIN/GERENTE)' })
   create(@Body() dto: CreateProductDto, @Request() req: any) {
     return this.productsService.create(dto, req.user.userId);
   }
 
   @Patch(':id')
-  @Roles('ADMIN', 'GERENTE')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
   @ApiOperation({ summary: 'Actualizar producto' })
   @ApiParam({ name: 'id', description: 'UUID del producto' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateProductDto, @Request() req: any) {
@@ -50,7 +50,7 @@ export class ProductsController {
   }
 
   @Patch(':id/estado')
-  @Roles('ADMIN', 'GERENTE')
+  @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
   @ApiOperation({ summary: 'Activar/Desactivar producto (ADMIN/GERENTE)' })
   @ApiParam({ name: 'id', description: 'UUID del producto' })
   toggleActive(@Param('id', ParseUUIDPipe) id: string, @Request() req: any) {

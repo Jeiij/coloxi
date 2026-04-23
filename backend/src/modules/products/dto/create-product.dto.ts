@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNumber, IsInt, IsOptional, IsArray, Min } from 'class-validator';
+import { IsString, IsNumber, IsInt, IsOptional, IsArray, IsBoolean, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateProductDto {
@@ -73,6 +73,11 @@ export class CreateProductDto {
   @IsOptional()
   @IsArray()
   colores_ids?: number[];
+
+  @ApiPropertyOptional({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  activo?: boolean;
 
   @ApiPropertyOptional()
   @IsOptional()

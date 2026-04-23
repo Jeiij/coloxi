@@ -92,13 +92,20 @@ export default function ProductFormPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Función auxiliar para convertir a número de forma segura (vacío = 0)
+    const toNum = (val: any) => {
+      const parsed = Number(val);
+      return isNaN(parsed) ? 0 : parsed;
+    };
+
     const payload = {
       ...formData,
-      capacidad_gal: Number(formData.capacidad_gal),
-      equivalencia_kg: Number(formData.equivalencia_kg),
-      costo_unitario_sin_iva: Number(formData.costo_unitario_sin_iva),
-      pvp_colombia: Number(formData.pvp_colombia),
-      pvp_venezuela: Number(formData.pvp_venezuela),
+      capacidad_gal: toNum(formData.capacidad_gal),
+      equivalencia_kg: toNum(formData.equivalencia_kg),
+      costo_unitario_sin_iva: toNum(formData.costo_unitario_sin_iva),
+      pvp_colombia: toNum(formData.pvp_colombia),
+      pvp_venezuela: toNum(formData.pvp_venezuela),
       categoria_id: formData.categoria_id ? Number(formData.categoria_id) : undefined,
       linea_id: formData.linea_id ? Number(formData.linea_id) : undefined,
       marca_id: formData.marca_id ? Number(formData.marca_id) : undefined,
