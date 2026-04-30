@@ -24,7 +24,7 @@ export interface Color {
 }
 
 export interface Product {
-  id: string;
+  id: number;
   codigo: string;
   nombre: string;
   nombre_corto: string | null;
@@ -47,7 +47,7 @@ export interface Product {
 
 export interface InventoryItem {
   id: string;
-  producto_id: string;
+  producto_id: number;
   stock_actual: string;
   stock_minimo: string;
   created_at: string;

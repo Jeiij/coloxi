@@ -16,7 +16,7 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 200, description: 'Login exitoso, retorna el token.', type: LoginResponseDto })
   @ApiResponse({ status: 401, description: 'Credenciales inválidas.' })
-  async login(@Request() req, @Body() loginDto: LoginDto): Promise<LoginResponseDto> {
+  async login(@Request() req: any, @Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(req.user);
   }
 

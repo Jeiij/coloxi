@@ -56,10 +56,10 @@ export class InventoryController {
     return this.inventoryService.update(id, dto);
   }
 
-  @Delete(':id')
+  @Patch(':id/estado')
   @Roles('ADMIN', 'GERENTE', 'JEFE_COMPRA')
-  @ApiOperation({ summary: 'Remover un producto del inventario interno' })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.inventoryService.remove(id);
+  @ApiOperation({ summary: 'Inhabilitar/Rehabilitar un ítem del inventario (soft delete)' })
+  toggleActive(@Param('id', ParseUUIDPipe) id: string) {
+    return this.inventoryService.toggleActive(id);
   }
 }

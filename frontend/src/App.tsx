@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 import AppLayout from './components/layout/AppLayout';
 import ProtectedRoute from './routes/ProtectedRoute';
 import LoginPage from './features/auth/LoginPage';
@@ -57,6 +58,15 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          duration: 3000,
+          style: { background: '#1f2937', color: '#f9fafb', borderRadius: '1rem', fontSize: '14px', fontWeight: 600 },
+          success: { iconTheme: { primary: '#10b981', secondary: '#f9fafb' } },
+          error: { iconTheme: { primary: '#ef4444', secondary: '#f9fafb' }, duration: 5000 },
+        }}
+      />
     </QueryClientProvider>
   );
 }

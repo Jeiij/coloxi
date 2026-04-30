@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import api from '../../lib/axios';
 
 export default function SettingsPage() {
@@ -18,7 +19,9 @@ export default function SettingsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings'] });
       setEditingKey(null);
+      toast.success('Parámetro actualizado correctamente');
     },
+    onError: () => toast.error('Error al actualizar el parámetro'),
   });
 
   const startEdit = (param: any) => {
@@ -46,10 +49,10 @@ export default function SettingsPage() {
             <li key={p.id} className="p-6 hover:bg-gray-50/50 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-gray-900 font-mono bg-gray-100 inline-block px-2 py-0.5 rounded">
-                    {p.clave}
+                  <p className="text-base font-bold text-gray-900 tracking-tight">
+                    {p.clave.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (char: string) => char.toUpperCase())}
                   </p>
-                  <p className="text-sm text-gray-500 mt-2">{p.descripcion}</p>
+                  <p className="text-xs text-gray-400 font-medium mt-1">{p.descripcion}</p>
                 </div>
                 
                 <div className="flex flex-col items-end gap-2 w-48">

@@ -3,9 +3,10 @@ import { IsString, IsNumber, IsOptional, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateInventoryItemDto {
-  @ApiProperty({ description: 'UUID del producto del maestro a integrar al inventario' })
-  @IsString()
-  producto_id: string;
+  @ApiProperty({ description: 'ID autoincremental del producto del maestro a integrar al inventario' })
+  @IsNumber()
+  @Type(() => Number)
+  producto_id: number;
 
   @ApiPropertyOptional({ example: 0, description: 'Stock actual inicial' })
   @IsOptional()
@@ -36,4 +37,8 @@ export class UpdateInventoryItemDto {
   @IsNumber()
   @Min(0)
   stock_minimo?: number;
+
+  @ApiPropertyOptional({ example: false })
+  @IsOptional()
+  activo?: boolean;
 }

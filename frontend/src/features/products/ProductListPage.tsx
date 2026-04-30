@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
-import { productApi, catalogApi } from './productApi';
+import { productApi } from './productApi';
 import { orderApi } from '../orders/orderApi';
 import { useAuthStore } from '../../stores/authStore';
-import { formatCurrency } from '../../lib/utils';
+import { formatCurrency, getImageUrl } from '../../lib/utils';
 import ProductSlideOver from './components/ProductSlideOver';
+import ProductRowCard, { ProductRowMetric, ProductRowTag } from '../../components/ProductRowCard';
 
 export default function ProductListPage() {
   const { user } = useAuthStore();
@@ -14,27 +15,24 @@ export default function ProductListPage() {
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [categoriaId, setCategoriaId] = useState('');
-  const [lineaId, setLineaId] = useState('');
-  const [marcaId, setMarcaId] = useState('');
+  const [categoriaId] = useState('');
+  const [lineaId] = useState('');
+  const [marcaId] = useState('');
 
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [mostrarInactivos, setMostrarInactivos] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['products', page, search, categoriaId, lineaId, marcaId],
+    queryKey: ['products', page, search, categoriaId, lineaId, marcaId, mostrarInactivos],
     queryFn: () => productApi.getAll({
       page,
       limit: 15,
       search: search || undefined,
-      categoria_id: categoriaId || undefined,
-      linea_id: lineaId || undefined,
-      marca_id: marcaId || undefined,
+      activo: mostrarInactivos ? 'all' : true,
     }),
   });
 
-  const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: catalogApi.getCategories });
-  const { data: lines } = useQuery({ queryKey: ['lines'], queryFn: catalogApi.getLines });
-  const { data: brands } = useQuery({ queryKey: ['brands'], queryFn: catalogApi.getBrands });
+
 
   // Buscar si hay borrador activo para mostrar banner
   const { data: draftOrdersResponse } = useQuery({
@@ -42,6 +40,8 @@ export default function ProductListPage() {
     queryFn: () => orderApi.getAll({ estado: 'BORRADOR', limit: 1 }),
   });
   const activeDraft = draftOrdersResponse?.data?.[0];
+
+
 
   return (
     <div>
@@ -83,90 +83,89 @@ export default function ProductListPage() {
         )}
       </div>
 
-      {/* Filtros */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row gap-4 items-center justify-between bg-gray-50/50">
           <input
             type="text"
-            placeholder="Buscar por código o nombre..."
+            placeholder="Buscar por código o nombre del producto..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="w-full sm:max-w-md px-4 py-2 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <select value={categoriaId} onChange={(e) => { setCategoriaId(e.target.value); setPage(1); }} className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer">
-            <option value="">Todas las categorías</option>
-            {categories?.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-          </select>
-          <select value={lineaId} onChange={(e) => { setLineaId(e.target.value); setPage(1); }} className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer">
-            <option value="">Todas las líneas</option>
-            {lines?.map((l) => <option key={l.id} value={l.id}>{l.nombre}</option>)}
-          </select>
-          <select value={marcaId} onChange={(e) => { setMarcaId(e.target.value); setPage(1); }} className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer">
-            <option value="">Todas las marcas</option>
-            {brands?.map((b) => <option key={b.id} value={b.id}>{b.nombre}</option>)}
-          </select>
+          <div className="flex items-center gap-4">
+            {!isJefeCompra && (
+              <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-sm">
+                <input
+                  type="checkbox"
+                  checked={mostrarInactivos}
+                  onChange={(e) => { setMostrarInactivos(e.target.checked); setPage(1); }}
+                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                />
+                <span className="text-xs font-bold text-gray-700">Ver Inhabilitados</span>
+              </label>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* Tabla */}
         {isLoading ? (
           <div className="p-12 text-center text-gray-400">Cargando productos...</div>
         ) : (
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-400 uppercase w-16">Item</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Código</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Nombre</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Presentación</th>
-                <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Costo (Sin IVA)</th>
-                <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase">PVP (COL)</th>
-                <th className="px-6 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {data?.data?.map((p) => (
-                <tr key={p.id} className="hover:bg-blue-50/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden shadow-sm flex items-center justify-center">
-                      {p.imagen_principal ? (
-                        <img src={p.imagen_principal} alt={p.nombre} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-xl">📦</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm font-mono font-medium text-blue-600">{p.codigo}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{p.nombre}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{p.presentacion}</td>
-                  <td className="px-6 py-4 text-sm text-right font-medium text-gray-600">
-                    {formatCurrency(p.costo_unitario_sin_iva)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-right font-semibold text-emerald-600">
-                    {formatCurrency(p.pvp_colombia)}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {isJefeCompra ? (
-                      <button 
-                        onClick={() => setSelectedProductId(p.id)}
-                        className="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-bold transition shadow-sm"
-                      >
-                        Añadir
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => navigate(`/productos/${p.id}/editar`)}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Editar
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="space-y-3 p-4">
+            {data?.data?.map((p) => {
+              
+              const tags: ProductRowTag[] = [];
+              if (p.activo) {
+                tags.push({ label: 'Activo', colorClass: 'bg-green-100 text-green-800' });
+              } else {
+                tags.push({ label: 'Inactivo', colorClass: 'bg-red-100 text-red-800' });
+              }
+              tags.push({ label: p.presentacion, colorClass: 'bg-gray-100 text-gray-600' });
+
+              const metrics: ProductRowMetric[] = [
+                { label: 'Costo Base', value: formatCurrency(p.costo_unitario_sin_iva) },
+                { label: 'PVP Colombia', value: formatCurrency(p.pvp_colombia), valueClass: 'text-emerald-600 font-bold' },
+                { label: 'PVP Venezuela', value: formatCurrency(p.pvp_venezuela), valueClass: 'text-purple-600 font-bold' },
+              ];
+
+              const actions = (
+                <div className="flex gap-2">
+                  {isJefeCompra ? (
+                    <button 
+                      onClick={() => setSelectedProductId(p.id)}
+                      className="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-bold transition shadow-sm"
+                    >
+                      Añadir a Orden
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => navigate(`/productos/${p.id}/editar`)}
+                      title="Editar producto"
+                      className="px-4 py-2 bg-white text-gray-500 hover:text-blue-600 border border-gray-200 hover:border-blue-200 hover:bg-blue-50 rounded-xl transition-all shadow-sm text-xs font-bold flex items-center gap-1.5"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                      Editar
+                    </button>
+                  )}
+                </div>
+              );
+
+              return (
+                <ProductRowCard
+                  key={p.id}
+                  code={p.codigo}
+                  name={p.nombre}
+                  image={p.imagen_principal ? getImageUrl(p.imagen_principal) : null}
+                  tags={tags}
+                  metrics={metrics}
+                  actions={actions}
+                  dimmed={!p.activo}
+                />
+              );
+            })}
+          </div>
         )}
 
         {/* Paginación */}

@@ -3,11 +3,11 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { orderApi } from '../../orders/orderApi';
 import { productApi } from '../productApi';
-import { formatCurrency } from '../../../lib/utils';
+import { formatCurrency, getImageUrl } from '../../../lib/utils';
 import type { Color } from '../../../types';
 
 interface ProductSlideOverProps {
-  productId: string | null;
+  productId: number | null;
   onClose: () => void;
 }
 
@@ -68,7 +68,7 @@ export default function ProductSlideOver({ productId, onClose }: ProductSlideOve
       
       await orderApi.addItem(activeOrderId, {
         producto_id: product.id,
-        color_id: colorId ? Number(colorId) : 1, // Si no tiene color real, mandamos un dummy o ajustamos el backend. (Asumiremos que el backend valora si no hay color o envia null. Wait, backend exige color_id). Si el backend exige, debe tener color.
+        color_id: colorId ? Number(colorId) : undefined, 
         cantidad: Number(cantidad)
       });
 
@@ -113,7 +113,7 @@ export default function ProductSlideOver({ productId, onClose }: ProductSlideOve
             <div className="relative bg-gray-100 h-64 shrink-0 overflow-hidden group">
               {product.imagenes && product.imagenes[0] ? (
                 <img 
-                  src={product.imagenes[0].url_imagen} 
+                  src={getImageUrl(product.imagenes[0].url_imagen) || ''} 
                   alt={product.nombre} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -158,21 +158,21 @@ export default function ProductSlideOver({ productId, onClose }: ProductSlideOve
                         <label className="block text-sm font-bold text-gray-900">1. Selecciona el Color</label>
                         {colorId && (
                           <span className="text-xs font-medium text-gray-500">
-                            {product.colores.find(c => c.id === colorId)?.nombre}
+                            {product.colores.find((c: Color) => c.id === colorId)?.nombre}
                           </span>
                         )}
                       </div>
                       <div className="flex flex-wrap gap-3">
-                        {product.colores.map((col: Color) => (
+                        {product.colores.map((cp: Color) => (
                           <button
-                            key={col.id}
+                            key={cp.id}
                             type="button"
-                            onClick={() => setColorId(col.id)}
+                            onClick={() => setColorId(cp.id)}
                             className={`w-10 h-10 rounded-full transition-all focus:outline-none ring-offset-2 ${
-                              colorId === col.id ? 'ring-2 ring-blue-600 scale-110 shadow-md' : 'ring-1 ring-gray-200 hover:scale-105 hover:shadow-sm'
+                              colorId === cp.id ? 'ring-2 ring-blue-600 scale-110 shadow-md' : 'ring-1 ring-gray-200 hover:scale-105 hover:shadow-sm'
                             }`}
-                            style={{ backgroundColor: col.codigo_hex }}
-                            title={col.nombre}
+                            style={{ backgroundColor: cp.codigo_hex || '#ccc' }}
+                            title={cp.nombre}
                           />
                         ))}
                       </div>

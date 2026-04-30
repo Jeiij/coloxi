@@ -36,7 +36,7 @@ export default function OrdenesRevisionPage() {
           onChange={(e) => { setEstado(e.target.value); setPage(1); }} 
           className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
         >
-          <option value="ENVIADA">Pendientes de Aprobación (Enviadas)</option>
+          <option value="ENVIADA">Pendientes por Aprobación</option>
           <option value="FINALIZADA">Aprobadas / Finalizadas</option>
         </select>
       </div>
@@ -64,7 +64,7 @@ export default function OrdenesRevisionPage() {
                   <td className="px-6 py-4 text-sm text-gray-500">{formatDate(o.fecha)}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${estadoBadge[o.estado] || 'bg-gray-100'}`}>
-                      {o.estado === 'ENVIADA' ? 'PENDIENTE' : o.estado}
+                      {o.estado === 'ENVIADA' ? 'PENDIENTE POR APROBACIÓN' : o.estado}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm">{o.mercado}</td>

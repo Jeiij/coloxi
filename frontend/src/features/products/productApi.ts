@@ -6,7 +6,7 @@ export const productApi = {
     const { data } = await api.get('/productos', { params });
     return data;
   },
-  getById: async (id: string): Promise<Product> => {
+  getById: async (id: string | number): Promise<Product> => {
     const { data } = await api.get(`/productos/${id}`);
     return data;
   },
@@ -14,9 +14,27 @@ export const productApi = {
     const { data } = await api.post('/productos', payload);
     return data;
   },
-  update: async (id: string, payload: any): Promise<Product> => {
+  update: async (id: string | number, payload: any): Promise<Product> => {
     const { data } = await api.patch(`/productos/${id}`, payload);
     return data;
+  },
+  toggleActive: async (id: string | number): Promise<void> => {
+    await api.patch(`/productos/${id}/estado`);
+  },
+
+  // ─── Imágenes ─────────────────────────────────────────────────────────────
+
+  uploadImage: async (id: string | number, file: File): Promise<{ id: string; url_imagen: string }> => {
+    const formData = new FormData();
+    formData.append('imagen', file);
+    const { data } = await api.post(`/productos/${id}/imagen`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data;
+  },
+
+  deleteImage: async (id: string | number, imagenId: string): Promise<void> => {
+    await api.delete(`/productos/${id}/imagen/${imagenId}`);
   },
 };
 

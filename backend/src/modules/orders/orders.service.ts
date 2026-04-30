@@ -10,6 +10,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { AddOrderItemDto } from './dto/add-order-item.dto';
 import { QueryOrdersDto } from './dto/query-orders.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { FinancialCalculatorService } from './financial-calculator.service';
+import { InventoryService } from '../inventory/inventory.service';
 import { PaginatedResult } from '../../common/interfaces/paginated-result.interface';
 import { Prisma } from '@prisma/client';
 
@@ -33,7 +35,11 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
 export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private financialCalculator: FinancialCalculatorService,
+    private inventoryService: InventoryService,
+  ) {}
 
   /**
    * Crear una nueva orden de compra en estado BORRADOR.
@@ -211,7 +217,7 @@ export class OrdersService {
     });
     if (!product) throw new NotFoundException(`Producto ${dto.producto_id} no encontrado`);
 
-    // 3. Resolver color: opcional si el producto no tiene colores configurados
+    // 3. Resolver color
     let colorNombre = 'Sin color';
     if (product.colores.length > 0) {
       const resolvedColorId = dto.color_id || product.colores[0].color_id;
@@ -225,80 +231,31 @@ export class OrdersService {
       colorNombre = colorMatch.color.nombre;
     }
 
-    // 4. Extraer parámetros (IVA de la orden, Factor del producto maestro)
-    const iva_pct = Number(order.iva_porcentaje);
-    const factorVzla = Number(product.factor_venezuela);
-    const cantidad = Number(dto.cantidad);
+    // 4. Calcular financieros usando el servicio dedicado
+    const calc = this.financialCalculator.calculate({
+      costo_unitario_sin_iva: Number(product.costo_unitario_sin_iva),
+      pvp_colombia: Number(product.pvp_colombia),
+      pvp_venezuela: Number(product.pvp_venezuela),
+      factor_venezuela: Number(product.factor_venezuela),
+      capacidad_gal: Number(product.capacidad_gal),
+      equivalencia_kg: Number(product.equivalencia_kg),
+      cantidad: Number(dto.cantidad),
+      iva_porcentaje: Number(order.iva_porcentaje),
+      pvp_venezuela_manual: dto.pvp_venezuela ? Number(dto.pvp_venezuela) : undefined,
+    });
 
-    // 5. Cálculos financieros según fórmulas de Excel proporcionadas
-    const G_costoSinIva = Number(product.costo_unitario_sin_iva);
-    const H_costoTotalSinIva = G_costoSinIva * cantidad;
-    
-    // I = G * (1 + IVA/100)
-    const I_costoUnitConIva = G_costoSinIva * (1 + iva_pct / 100);
-    const J_costoTotalConIva = I_costoUnitConIva * cantidad;
-
-    const L_pvpCol = Number(product.pvp_colombia);
-    const M_pvpColTotal = L_pvpCol * cantidad;
-
-    // O = L - G (Ganancia Bruta)
-    const O_gananciaBrutaUnit = L_pvpCol - G_costoSinIva;
-    const P_gananciaBrutaTotal = O_gananciaBrutaUnit * cantidad;
-
-    // Q = L - I (Ganancia Neta)
-    const Q_gananciaNetaUnit = L_pvpCol - I_costoUnitConIva;
-    const R_gananciaNetaTotal = Q_gananciaNetaUnit * cantidad;
-
-    // S = O / L (% Ganancia)
-    const S_margenPct = L_pvpCol > 0 ? (O_gananciaBrutaUnit / L_pvpCol) * 100 : 0;
-
-    // U = L * Factor (Costo Ajustado Vzla)
-    const U_costoAjustadoVzla = L_pvpCol * factorVzla;
-
-    // V = PVP Venezuela (Manual en item, o del producto, o calculado)
-    const productPvpVzla = Number(product.pvp_venezuela) > 0 ? Number(product.pvp_venezuela) : U_costoAjustadoVzla;
-    const V_pvpVzlaManual = dto.pvp_venezuela ? Number(dto.pvp_venezuela) : productPvpVzla;
-    const pvpVzlaTotal = V_pvpVzlaManual * cantidad;
-
-    // W = V - U (Ganancia Venezuela)
-    const W_gananciaVzlaUnit = V_pvpVzlaManual - U_costoAjustadoVzla;
-    const X_gananciaVzlaTotal = W_gananciaVzlaUnit * cantidad;
-
-    const capGal = Number(product.capacidad_gal);
-    const eqKg = Number(product.equivalencia_kg);
-    const totalGalones = capGal * cantidad;
-    const totalKgs = eqKg * cantidad;
-
-    // 6. Guardar snapshot completo incluyendo color y nuevos campos de ganancia neta
+    // 5. Guardar snapshot completo
     const detail = await this.prisma.orderDetail.create({
       data: {
         orden_compra_id: orderId,
         producto_id: product.id,
-        producto_codigo: product.codigo,
+        producto_codigo: product.codigo ?? '',
         producto_nombre: product.nombre,
         presentacion: product.presentacion,
         color_nombre: colorNombre,
-        capacidad_gal: capGal,
-        equivalencia_kg: eqKg,
-        cantidad: cantidad,
-        total_galones: totalGalones,
-        total_kgs: totalKgs,
-        costo_unitario_sin_iva: G_costoSinIva,
-        costo_total_sin_iva: H_costoTotalSinIva,
-        costo_unitario_con_iva: I_costoUnitConIva,
-        costo_total_con_iva: J_costoTotalConIva,
-        pvp_colombia_unitario: L_pvpCol,
-        pvp_colombia_total: M_pvpColTotal,
-        ganancia_colombia_unitaria: O_gananciaBrutaUnit,
-        ganancia_colombia_total: P_gananciaBrutaTotal,
-        ganancia_colombia_neta_unitaria: Q_gananciaNetaUnit,
-        ganancia_colombia_neta_total: R_gananciaNetaTotal,
-        margen_colombia_porcentaje: S_margenPct,
-        costo_ajustado_venezuela: U_costoAjustadoVzla,
-        pvp_venezuela_unitario: V_pvpVzlaManual,
-        pvp_venezuela_total: pvpVzlaTotal,
-        ganancia_venezuela_unitaria: W_gananciaVzlaUnit,
-        ganancia_venezuela_total: X_gananciaVzlaTotal,
+        capacidad_gal: Number(product.capacidad_gal),
+        equivalencia_kg: Number(product.equivalencia_kg),
+        ...calc,
         foto_url: product.imagenes[0]?.url_imagen || null,
       },
     });
@@ -346,50 +303,25 @@ export class OrdersService {
       );
     }
 
-    const updated = await this.prisma.order.update({
-      where: { id: orderId },
-      data: { estado: dto.estado },
-      include: {
-        creator: { select: { id: true, nombre_completo: true } },
-        detalles: true,
-      },
-    });
+    // Ejecutar todo en una transacción atómica
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { estado: dto.estado },
+        include: {
+          creator: { select: { id: true, nombre_completo: true } },
+          detalles: true,
+        },
+      });
 
-    // ✅ Si la orden se finaliza, actualizamos el inventario interno
-    if (dto.estado === 'FINALIZADA') {
-      this.logger.log(`Procesando entrada de inventario para orden ${orderId}...`);
-      
-      for (const item of updated.detalles) {
-        const qtyToSum = Number(item.cantidad);
-        
-        // Buscar o crear el registro en el inventario interno
-        const inventoryItem = await this.prisma.inventoryItem.findUnique({
-          where: { producto_id: item.producto_id }
-        });
-
-        if (inventoryItem) {
-          // Actualizar stock existente
-          await this.prisma.inventoryItem.update({
-            where: { id: inventoryItem.id },
-            data: { 
-              stock_actual: { increment: qtyToSum },
-              updated_at: new Date()
-            }
-          });
-          this.logger.log(`Stock actualizado para ${item.producto_codigo}: +${qtyToSum}`);
-        } else {
-          // Crear nuevo registro en inventario (Auto-Match sugerido)
-          await this.prisma.inventoryItem.create({
-            data: {
-              producto_id: item.producto_id,
-              stock_actual: qtyToSum,
-              stock_minimo: 0, // Por defecto 0, el jefe de compra lo ajustará luego
-            }
-          });
-          this.logger.log(`Nuevo ítem creado en inventario para ${item.producto_codigo} con stock: ${qtyToSum}`);
-        }
+      // Delegar actualización de inventario al servicio especializado
+      if (dto.estado === 'FINALIZADA') {
+        this.logger.log(`Procesando entrada de inventario para orden ${orderId}...`);
+        await this.inventoryService.processOrderItems(tx, updatedOrder.detalles);
       }
-    }
+
+      return updatedOrder;
+    });
 
     return updated;
   }
@@ -408,8 +340,11 @@ export class OrdersService {
       throw new ForbiddenException('Solo el creador puede eliminar este borrador');
     }
 
-    await this.prisma.orderDetail.deleteMany({ where: { orden_compra_id: orderId } });
-    await this.prisma.order.delete({ where: { id: orderId } });
+    await this.prisma.$transaction(async (tx) => {
+      await tx.orderDetail.deleteMany({ where: { orden_compra_id: orderId } });
+      await tx.order.delete({ where: { id: orderId } });
+    });
+
     this.logger.log(`Orden ${orderId} eliminada correctamente`);
     return { message: 'Orden eliminada exitosamente' };
   }

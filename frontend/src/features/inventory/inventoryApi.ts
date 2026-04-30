@@ -10,9 +10,9 @@ export const inventoryApi = {
   create: (data: { producto_id: string; stock_actual?: number; stock_minimo?: number }) =>
     api.post('/inventario', data).then((r) => r.data),
 
-  update: (id: string, data: { stock_actual?: number; stock_minimo?: number }) =>
+  update: (id: string, data: { stock_actual?: number; stock_minimo?: number; activo?: boolean }) =>
     api.patch(`/inventario/${id}`, data).then((r) => r.data),
 
-  remove: (id: string) =>
-    api.delete(`/inventario/${id}`).then((r) => r.data),
+  toggleActive: (id: string) =>
+    api.patch(`/inventario/${id}/estado`).then((r) => r.data),
 };

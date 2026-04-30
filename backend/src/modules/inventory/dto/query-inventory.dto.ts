@@ -32,6 +32,15 @@ export class QueryInventoryDto {
   })
   stock_bajo?: boolean;
 
+  @ApiPropertyOptional({ description: 'Filtrar por activo. "true", "false", o "all". Si no se envía asume true.' })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'all') return 'all';
+    if (value === 'false' || value === false) return false;
+    return true; // default behavior
+  })
+  activo?: boolean | 'all' = true;
+
   @ApiPropertyOptional({ enum: ['stock_actual', 'producto_nombre', 'created_at'], default: 'producto_nombre' })
   @IsOptional()
   @IsIn(['stock_actual', 'producto_nombre', 'created_at'])

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { inventoryApi } from '../inventory/inventoryApi';
 import { orderApi } from '../orders/orderApi';
-import { formatNumber } from '../../lib/utils';
+import { formatNumber, getImageUrl } from '../../lib/utils';
 
 interface PlanState {
   demanda: number;
@@ -179,7 +179,7 @@ export default function PlanificadorComprasPage() {
                       <td className="px-4 py-3">
                         <div className="w-8 h-8 rounded-lg bg-white overflow-hidden shadow-sm flex items-center justify-center border border-gray-100">
                           {prod?.imagen_principal ? (
-                            <img src={prod.imagen_principal} alt={prod.nombre} className="w-full h-full object-cover" />
+                            <img src={getImageUrl(prod.imagen_principal) || ''} alt={prod.nombre} className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-xs">📦</span>
                           )}

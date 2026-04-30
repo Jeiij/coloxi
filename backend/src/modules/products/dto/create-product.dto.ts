@@ -4,8 +4,9 @@ import { Type } from 'class-transformer';
 
 export class CreateProductDto {
   @ApiProperty({ example: 'SUPER5-GAL-BL' })
+  @IsOptional()
   @IsString()
-  codigo: string;
+  codigo?: string;
 
   @ApiProperty({ example: 'Pintura Super5 Galón Blanco' })
   @IsString()

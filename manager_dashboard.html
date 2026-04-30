@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COLOXI | Manager Ultra Dashboard</title>
+    <!-- Google Fonts: Outfi & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- AOS Animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --p: #6366f1; /* Primary Indigo */
+            --p-h: #4f46e5;
+            --s: #64748b; /* Secondary Slate */
+            --acc: #8b5cf6; /* Accent Violet */
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --sidebar: #ffffff;
+            --radius: 20px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0b0f1a;
+            --card: #151b2c;
+            --border: #1e293b;
+            --text: #f1f5f9;
+            --sidebar: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, .brand { font-family: 'Outfit', sans-serif; }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 2.5rem 1.5rem;
+            border-right: 1px solid var(--border);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 3.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--p), var(--acc));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .nav-links { list-style: none; flex: 1; }
+        .nav-item { margin-bottom: 0.5rem; }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0.9rem 1.2rem;
+            color: var(--s);
+            text-decoration: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover {
+            color: var(--p);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .nav-link.active {
+            background: var(--p);
+            color: white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.25);
+        }
+
+        /* --- Main Content Area --- */
+        .main {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding: 2.5rem 4rem;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .welcome h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
+        
+        .top-ctrl { display: flex; align-items: center; gap: 1.5rem; }
+
+        .theme-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 18px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        }
+
+        /* --- Dashboard Tabs --- */
+        .tabs {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--s);
+            cursor: pointer;
+            position: relative;
+            padding-bottom: 1.1rem;
+        }
+
+        .tab-btn.active { color: var(--p); }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--p);
+            border-radius: 10px;
+        }
+
+        /* --- Cards & Grid --- */
+        .grid-kpi {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .kpi-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--p);
+        }
+
+        .kpi-icon {
+            width: 54px;
+            height: 54px;
+            background: rgba(99, 102, 241, 0.08); /* Transparent p */
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--p);
+            margin-bottom: 1.5rem;
+        }
+
+        .kpi-val { font-size: 2.4rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 0.5rem; font-family: 'Outfit'; }
+        .kpi-label { color: var(--s); font-size: 0.9rem; font-weight: 600; }
+
+        /* --- Sections Area --- */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeInUp 0.5s ease forwards; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chart-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 35px;
+            margin-bottom: 2rem;
+            height: 450px; /* Fixed height to prevent "inf" scroll issues */
+            position: relative;
+        }
+
+        .chart-box-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 2rem;
+        }
+
+        /* --- Tables --- */
+        .fancy-table-container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 35px;
+            padding: 2rem;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.02);
+        }
+
+        .table-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        
+        .modern-table { width: 100%; border-collapse: collapse; }
+        .modern-table th { text-align: left; padding: 1.2rem; color: var(--s); font-size: 0.8rem; text-transform: uppercase; font-weight: 800; border-bottom: 1px solid var(--border); }
+        .modern-table td { padding: 1.5rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+
+        .user-tag { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+        .user-tag img { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; border: 2px solid var(--bg); }
+
+        .status { padding: 6px 14px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; }
+        .status-warn { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .status-ok { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+        /* --- Inventory Specific --- */
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .prod-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 1.2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .prod-img { width: 80px; height: 80px; border-radius: 18px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--s); }
+        .prod-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .prod-stock { font-size: 0.8rem; font-weight: 800; color: var(--p); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grid-kpi { grid-template-columns: repeat(2, 1fr); }
+            .chart-box-grid { grid-template-columns: 1fr; }
+            .chart-box { height: 400px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 1.5rem; width: 100%; }
+            .grid-kpi { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo"><i class="fas fa-palette"></i></div>
+            <h2 style="font-weight: 900; letter-spacing: -1px; font-size: 1.6rem;">COLOXI</h2>
+        </div>
+
+        <nav class="nav-links" id="sidebar-nav">
+            <div class="nav-item">
+                <a href="#" class="nav-link active" data-tab="resumen"><i class="fas fa-house"></i> Overview</a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" data-tab="inventario"><i class="fas fa-cubes"></i> Inventory</a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" data-tab="ordenes"><i class="fas fa-receipt"></i> Orders</a>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" data-tab="analytics"><i class="fas fa-chart-simple"></i> Analytics</a>
+            </div>
+        </nav>
+
+        <div style="background: linear-gradient(to bottom, rgba(99,102,241,0.05), transparent); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border);">
+            <p style="font-weight: 800; font-size: 0.8rem; margin-bottom: 0.5rem;">Storage Health</p>
+            <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 10px; margin-bottom: 0.8rem; overflow: hidden;">
+                <div style="width: 75%; height: 100%; background: var(--p);"></div>
+            </div>
+            <p style="font-size: 0.7rem; color: var(--s);">7,500 units in stock</p>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+        <div class="container" id="content-wrap">
+            <header>
+                <div class="welcome">
+                    <p style="font-weight: 700; color: var(--p); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Manager Center</p>
+                    <h1 id="page-title">Executive Summary</h1>
+                </div>
+
+                <div class="top-ctrl">
+                    <button class="theme-btn" id="theme-btn"><i class="fas fa-moon"></i></button>
+                    <div style="display: flex; align-items: center; gap: 15px; background: var(--card); padding: 5px 8px; border-radius: 20px; border: 1px solid var(--border);">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" style="width: 40px; height: 40px; border-radius: 15px;" alt="User">
+                        <div>
+                            <p style="font-size: 0.85rem; font-weight: 800;">Admin User</p>
+                            <p style="font-size: 0.7rem; color: var(--s); font-weight: 600;">System Administrator</p>
+                        </div>
+                        <i class="fas fa-chevron-down" style="padding: 0 10px; font-size: 0.8rem; color: var(--s);"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- KPI Row -->
+            <div class="grid-kpi">
+                <div class="kpi-card" data-aos="fade-up">
+                    <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="kpi-val">$84.3k</div>
+                    <div class="kpi-label">Sales Revenue</div>
+                </div>
+                <div class="kpi-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="kpi-icon" style="color: #10b981; background: rgba(16,185,129,0.08);"><i class="fas fa-cart-flatbed"></i></div>
+                    <div class="kpi-val">128</div>
+                    <div class="kpi-label">Total Shipments</div>
+                </div>
+                <div class="kpi-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="kpi-icon" style="color: #f59e0b; background: rgba(245,158,11,0.08);"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="kpi-val">12</div>
+                    <div class="kpi-label">Pending Reviews</div>
+                </div>
+                <div class="kpi-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="kpi-icon" style="color: #ef4444; background: rgba(239,68,68,0.08);"><i class="fas fa-arrow-trend-down"></i></div>
+                    <div class="kpi-val">4</div>
+                    <div class="kpi-label">Stock Breakages</div>
+                </div>
+            </div>
+
+            <!-- TAB SECTIONS -->
+            
+            <!-- 1. RESUMEN SECTION -->
+            <div id="resumen" class="section active">
+                <div class="chart-box-grid">
+                    <div class="chart-box" data-aos="fade-right">
+                        <h3 style="margin-bottom: 1.5rem; font-weight: 800;">Operational Performance</h3>
+                        <div style="position: relative; height: calc(100% - 40px);">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-box" data-aos="fade-left">
+                        <h3 style="margin-bottom: 1.5rem; font-weight: 800;">Market Share</h3>
+                        <div style="position: relative; height: calc(100% - 40px); display: flex; align-items: center; justify-content: center;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fancy-table-container" data-aos="fade-up">
+                    <div class="table-head">
+                        <h3 style="font-weight: 800;">Recent Order Requests</h3>
+                        <button style="border: none; background: var(--p); color: white; padding: 10px 20px; border-radius: 12px; font-weight: 700; cursor: pointer;">Review All</button>
+                    </div>
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>ORDER ID</th>
+                                <th>REQUESTER</th>
+                                <th>TOTAL AMOUNT</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 800; color: var(--p);">#OC-7782</td>
+                                <td>
+                                    <div class="user-tag">
+                                        <img src="https://i.pravatar.cc/150?u=a" alt="User">
+                                        Alex Martinez
+                                    </div>
+                                </td>
+                                <td style="font-weight: 800;">$14,200.00</td>
+                                <td style="color: var(--s);">Today, 10:30 AM</td>
+                                <td><span class="status status-warn">PENDING</span></td>
+                                <td><i class="fas fa-ellipsis-v" style="color: var(--s); cursor: pointer; padding: 10px;"></i></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 800; color: var(--p);">#OC-7780</td>
+                                <td>
+                                    <div class="user-tag">
+                                        <img src="https://i.pravatar.cc/150?u=b" alt="User">
+                                        Sarah Lewis
+                                    </div>
+                                </td>
+                                <td style="font-weight: 800;">$3,450.50</td>
+                                <td style="color: var(--s);">Yesterday, 04:15 PM</td>
+                                <td><span class="status status-ok">APPROVED</span></td>
+                                <td><i class="fas fa-ellipsis-v" style="color: var(--s); cursor: pointer; padding: 10px;"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. INVENTARIO SECTION -->
+            <div id="inventario" class="section">
+                <div class="table-head">
+                    <h3 style="font-weight: 800;">Real-time Inventory</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" placeholder="Search product..." style="padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); outline: none;">
+                    </div>
+                </div>
+                <div class="inv-grid">
+                    <div class="prod-card">
+                        <div class="prod-img"><i class="fas fa-brush"></i></div>
+                        <div class="prod-info">
+                            <h4>Pintuco Viniltex</h4>
+                            <p class="prod-stock">STOCK: 450 Units</p>
+                            <p style="font-size: 0.7rem; color: var(--s);">Category: Premium</p>
+                        </div>
+                    </div>
+                    <div class="prod-card">
+                        <div class="prod-img"><i class="fas fa-fill-drip"></i></div>
+                        <div class="prod-info">
+                            <h4>Sherwin Enamel</h4>
+                            <p class="prod-stock">STOCK: 12 Units</p>
+                            <p style="font-size: 0.7rem; color: #ef4444; font-weight: bold;">CRITICAL LOW</p>
+                        </div>
+                    </div>
+                    <!-- Add more for demo -->
+                    <div class="prod-card">
+                        <div class="prod-img"><i class="fas fa-bucket"></i></div>
+                        <div class="prod-info">
+                            <h4>Protecto Exterior</h4>
+                            <p class="prod-stock">STOCK: 1,200 Units</p>
+                            <p style="font-size: 0.7rem; color: var(--s);">Category: Bulk</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. ORDENES SECTION -->
+            <div id="ordenes" class="section">
+                <div class="fancy-table-container">
+                    <h3 style="margin-bottom: 2rem;">Order History & Tracking</h3>
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>TRACKING NO</th>
+                                <th>SUPPLIER</th>
+                                <th>ITEMS</th>
+                                <th>EST. DELIVERY</th>
+                                <th>PROGRESS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 800;">#TRK-9901</td>
+                                <td style="font-weight: 700;">Global Paints S.A.</td>
+                                <td>24 items</td>
+                                <td>Apr 30, 2026</td>
+                                <td>
+                                    <div style="width: 100px; height: 6px; background: var(--bg); border-radius: 10px; overflow: hidden;">
+                                        <div style="width: 60%; height: 100%; background: var(--success);"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        // Logic for Theme
+        const themeBtn = document.getElementById('theme-btn');
+        const body = document.body;
+        const themeIcon = themeBtn.querySelector('i');
+
+        themeBtn.addEventListener('click', () => {
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeIcon.classList.replace(isDark ? 'fa-sun' : 'fa-moon', isDark ? 'fa-moon' : 'fa-sun');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            updateCharts();
+        });
+
+        // Tab System
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+        const pageTitle = document.getElementById('page-title');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-tab');
+                
+                // Update navigation UI
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Update Sections visibility
+                sections.forEach(s => s.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+
+                // Update Page Title
+                pageTitle.innerText = link.innerText.trim();
+            });
+        });
+
+        // CHARTS DATA
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+
+        let perfChart, catChart;
+
+        function initCharts() {
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            const color = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(15,23,42,0.6)';
+
+            perfChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                    datasets: [{
+                        label: 'Gross Profit',
+                        data: [12000, 19000, 15000, 22000, 28000],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(99,102,241,0.05)' }, ticks: { color: color } },
+                        x: { grid: { display: false }, ticks: { color: color } }
+                    }
+                }
+            });
+
+            catChart = new Chart(catCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Viniltex', 'Terinsa', 'Sherwin', 'Otros'],
+                    datasets: [{
+                        data: [55, 20, 15, 10],
+                        backgroundColor: ['#6366f1', '#8b5cf6', '#10b981', '#f59e0b'],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: color, font: { weight: 'bold' } } } }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if (perfChart) perfChart.destroy();
+            if (catChart) catChart.destroy();
+            initCharts();
+        }
+
+        // Restore Theme
+        if(localStorage.getItem('theme') === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+        initCharts();
+    </script>
+</body>
+</html>

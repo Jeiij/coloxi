@@ -32,3 +32,12 @@ export function formatDate(dateStr: string): string {
     day: 'numeric',
   });
 }
+
+/**
+ * Devuelve la URL completa de una imagen asumiendo que el backend corre en el puerto 3000.
+ */
+export function getImageUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `http://localhost:3000${path.startsWith('/') ? '' : '/'}${path}`;
+}

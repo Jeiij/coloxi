@@ -41,14 +41,14 @@ export class QueryProductsDto {
   @IsInt()
   marca_id?: number;
 
-  @ApiPropertyOptional({ example: true, description: 'Filtrar por activo/inactivo. Si no se envía muestra solo activos.' })
+  @ApiPropertyOptional({ description: 'Filtrar por activo. "true", "false", o "all". Si no se envía asume true.' })
   @IsOptional()
   @Transform(({ value }) => {
-    if (value === 'true' || value === true) return true;
+    if (value === 'all') return 'all';
     if (value === 'false' || value === false) return false;
-    return undefined;
+    return true; // default behavior
   })
-  activo?: boolean = true;
+  activo?: boolean | 'all' = true;
 
 
   @ApiPropertyOptional({ enum: ['nombre', 'codigo', 'created_at'], default: 'nombre' })

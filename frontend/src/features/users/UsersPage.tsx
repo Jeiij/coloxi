@@ -107,7 +107,12 @@ export default function UsersPage() {
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {createMutation.isError && (
                 <div className="p-3 bg-red-50 text-red-700 text-sm rounded-lg border border-red-100">
-                  {(createMutation.error as any)?.response?.data?.message || 'Error al crear usuario'}
+                  {(() => {
+                    const errData = (createMutation.error as any)?.response?.data;
+                    const msg = errData?.error?.message || errData?.message;
+                    if (Array.isArray(msg)) return msg.join(', ');
+                    return msg || 'Error al crear usuario';
+                  })()}
                 </div>
               )}
               <div>

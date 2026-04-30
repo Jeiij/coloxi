@@ -1,6 +1,7 @@
 import { Controller, Get, Patch, Param, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SettingsService } from './settings.service';
+import { UpdateParameterDto } from './dto/update-parameter.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorator';
@@ -21,7 +22,7 @@ export class SettingsController {
 
   @Patch(':clave')
   @ApiOperation({ summary: 'Actualizar un parámetro del sistema (ADMIN)' })
-  update(@Param('clave') clave: string, @Body('valor') valor: string) {
-    return this.settingsService.update(clave, valor);
+  update(@Param('clave') clave: string, @Body() dto: UpdateParameterDto) {
+    return this.settingsService.update(clave, dto.valor);
   }
 }

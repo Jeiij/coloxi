@@ -50,6 +50,7 @@ model SystemParameter {
 model Category {
   id        Int       @id @default(autoincrement())
   nombre    String    @unique @db.VarChar(100)
+  activo    Boolean   @default(true)
   productos Product[]
 
   @@map("categorias")
@@ -58,6 +59,7 @@ model Category {
 model Line {
   id        Int       @id @default(autoincrement())
   nombre    String    @unique @db.VarChar(100)
+  activo    Boolean   @default(true)
   productos Product[]
 
   @@map("lineas")
@@ -66,6 +68,7 @@ model Line {
 model Brand {
   id        Int       @id @default(autoincrement())
   nombre    String    @unique @db.VarChar(100)
+  activo    Boolean   @default(true)
   productos Product[]
 
   @@map("marcas")
@@ -75,14 +78,15 @@ model Color {
   id         Int              @id @default(autoincrement())
   nombre     String           @unique @db.VarChar(60)
   codigo_hex String?          @db.VarChar(7)
+  activo     Boolean          @default(true)
   productos  ColorOnProduct[]
 
   @@map("colores")
 }
 
 model Product {
-  id                     String           @id @default(uuid()) @db.Uuid
-  codigo                 String           @unique @db.VarChar(50)
+  id                     Int              @id @default(autoincrement())
+  codigo                 String?          @unique @db.VarChar(50)
   nombre                 String           @db.VarChar(200)
   nombre_corto           String?          @db.VarChar(120)
   categoria_id           Int?
@@ -111,12 +115,16 @@ model Product {
   marca                  Brand?           @relation(fields: [marca_id], references: [id], onDelete: Restrict)
   updater                User?            @relation("products_updated_by", fields: [updated_by], references: [id])
 
+  @@index([activo])
+  @@index([categoria_id])
+  @@index([linea_id])
+  @@index([marca_id])
   @@map("productos")
 }
 
 model ProductImage {
   id           String   @id @default(uuid()) @db.Uuid
-  producto_id  String   @db.Uuid
+  producto_id  Int
   url_imagen   String
   es_principal Boolean  @default(false)
   orden_visual Int      @default(1)
@@ -129,7 +137,7 @@ model ProductImage {
 }
 
 model ColorOnProduct {
-  producto_id String  @db.Uuid
+  producto_id Int
   color_id    Int
   color       Color   @relation(fields: [color_id], references: [id], onDelete: Cascade)
   producto    Product @relation(fields: [producto_id], references: [id], onDelete: Cascade)
@@ -140,14 +148,16 @@ model ColorOnProduct {
 
 model InventoryItem {
   id           String   @id @default(uuid()) @db.Uuid
-  producto_id  String   @unique @db.Uuid
+  producto_id  Int      @unique
   stock_actual Decimal  @default(0) @db.Decimal(14, 2)
   stock_minimo Decimal  @default(0) @db.Decimal(14, 2)
+  activo       Boolean  @default(true)
   created_at   DateTime @default(now()) @db.Timestamptz(6)
   updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   producto     Product  @relation(fields: [producto_id], references: [id], onDelete: Cascade)
 
+  @@index([activo])
   @@map("inventario_interno")
 }
 
@@ -167,13 +177,15 @@ model Order {
   detalles         OrderDetail[]
   creator          User?         @relation("orders_created_by", fields: [created_by], references: [id])
 
+  @@index([estado, created_by])
+  @@index([created_at])
   @@map("ordenes_compra")
 }
 
 model OrderDetail {
   id                          String   @id @default(uuid()) @db.Uuid
   orden_compra_id             String   @db.Uuid
-  producto_id                 String   @db.Uuid
+  producto_id                 Int
   producto_codigo             String   @db.VarChar(50)
   producto_nombre             String   @db.VarChar(200)
   presentacion                String   @db.VarChar(50)

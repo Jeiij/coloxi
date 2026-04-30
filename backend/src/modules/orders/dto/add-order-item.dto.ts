@@ -4,9 +4,11 @@ import { Type } from 'class-transformer';
 import { IsOptional } from 'class-validator';
 
 export class AddOrderItemDto {
-  @ApiProperty({ description: 'UUID del producto a agregar', example: 'uuid-producto' })
-  @IsUUID()
-  producto_id: string;
+  @ApiProperty({ description: 'ID numérico del producto a agregar', example: 1 })
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  producto_id: number;
 
   @ApiProperty({ description: 'ID del color seleccionado', example: 1, required: false })
   @IsOptional()

@@ -14,7 +14,7 @@ export const orderApi = {
     const { data } = await api.post('/ordenes', body);
     return data;
   },
-  addItem: async (orderId: string, body: { producto_id: string; color_id?: number; cantidad: number; pvp_venezuela?: number }) => {
+  addItem: async (orderId: string, body: { producto_id: number; color_id?: number; cantidad: number; pvp_venezuela?: number }) => {
     const { data } = await api.post(`/ordenes/${orderId}/items`, body);
     return data;
   },

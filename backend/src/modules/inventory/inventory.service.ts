@@ -27,11 +27,15 @@ export class InventoryService {
       stock_bajo,
       orderBy = 'producto_nombre',
       orderDir = 'asc',
+      activo = true,
     } = query;
 
     const skip = (page - 1) * limit;
 
     const where: Prisma.InventoryItemWhereInput = {};
+    if (activo !== 'all') {
+      where.activo = activo as boolean;
+    }
 
     if (search) {
       where.producto = {
@@ -167,6 +171,7 @@ export class InventoryService {
       data: {
         ...(dto.stock_actual !== undefined && { stock_actual: dto.stock_actual }),
         ...(dto.stock_minimo !== undefined && { stock_minimo: dto.stock_minimo }),
+        ...(dto.activo !== undefined && { activo: dto.activo }),
       },
       include: {
         producto: {
@@ -177,39 +182,41 @@ export class InventoryService {
   }
 
   /**
-   * Eliminar un producto del inventario interno (no borra del maestro).
+   * Inhabilitar/Habilitar un producto del inventario interno.
+   * Esto funciona como un soft-delete local.
    */
-  async remove(id: string) {
+  async toggleActive(id: string) {
     const item = await this.prisma.inventoryItem.findUnique({ where: { id } });
     if (!item) {
       throw new NotFoundException(`Ítem de inventario ${id} no encontrado`);
     }
 
-    await this.prisma.inventoryItem.delete({ where: { id } });
-    this.logger.log(`Ítem ${id} eliminado del inventario interno`);
-    return { message: 'Producto removido del inventario interno' };
+    const updated = await this.prisma.inventoryItem.update({
+      where: { id },
+      data: { activo: !item.activo },
+    });
+    this.logger.log(`Ítem ${id} ahora está ${updated.activo ? 'activo' : 'inactivo'} en el inventario interno`);
+    return { message: `Producto ${updated.activo ? 'rehabilitado' : 'inhabilitado'} en el inventario` };
   }
 
   /**
    * Obtener estadísticas del inventario interno (para KPIs del dashboard).
    */
   async getStats() {
-    const [total, items] = await Promise.all([
-      this.prisma.inventoryItem.count(),
-      this.prisma.inventoryItem.findMany({
-        select: { stock_actual: true, stock_minimo: true },
-      }),
+    // Optimización: usar consultas a nivel de base de datos en vez de cargar todo en memoria.
+    const [totalResult, agotadosResult, stockBajoResult] = await Promise.all([
+      this.prisma.inventoryItem.count({ where: { activo: true } }),
+      this.prisma.inventoryItem.count({ where: { activo: true, stock_actual: { lte: 0 } } }),
+      this.prisma.$queryRaw<[{ count: bigint }]>`
+        SELECT COUNT(*)::bigint as count 
+        FROM inventario_interno 
+        WHERE activo = true AND stock_actual > 0 AND stock_actual < stock_minimo
+      `
     ]);
 
-    let stockBajo = 0;
-    let agotados = 0;
-
-    for (const item of items) {
-      const stock = Number(item.stock_actual);
-      const minimo = Number(item.stock_minimo);
-      if (stock <= 0) agotados++;
-      else if (stock < minimo) stockBajo++;
-    }
+    const total = totalResult;
+    const agotados = agotadosResult;
+    const stockBajo = Number(stockBajoResult[0]?.count || 0);
 
     return {
       total_items: total,
@@ -217,5 +224,43 @@ export class InventoryService {
       agotados,
       ok: total - stockBajo - agotados,
     };
+  }
+
+  /**
+   * Procesar entrada de inventario desde una orden aprobada.
+   * Recibe un cliente de transacción para mantener atomicidad con el cambio de estado.
+   */
+  async processOrderItems(
+    tx: Parameters<Parameters<typeof this.prisma.$transaction>[0]>[0],
+    items: Array<{ producto_id: number; producto_codigo: string; cantidad: any }>,
+  ) {
+    for (const item of items) {
+      const qtyToSum = Number(item.cantidad);
+
+      const inventoryItem = await tx.inventoryItem.findUnique({
+        where: { producto_id: item.producto_id },
+      });
+
+      if (inventoryItem) {
+        await tx.inventoryItem.update({
+          where: { id: inventoryItem.id },
+          data: {
+            stock_actual: { increment: qtyToSum },
+            activo: true, // Auto-reactivar si estaba inhabilitado
+            updated_at: new Date(),
+          },
+        });
+        this.logger.log(`Stock actualizado para ${item.producto_codigo}: +${qtyToSum}`);
+      } else {
+        await tx.inventoryItem.create({
+          data: {
+            producto_id: item.producto_id,
+            stock_actual: qtyToSum,
+            stock_minimo: 0,
+          },
+        });
+        this.logger.log(`Nuevo ítem creado en inventario para ${item.producto_codigo} con stock: ${qtyToSum}`);
+      }
+    }
   }
 }

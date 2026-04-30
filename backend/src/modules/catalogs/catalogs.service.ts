@@ -6,8 +6,15 @@ export class CatalogsService {
   constructor(private prisma: PrismaService) {}
 
   // ===== CATEGORÍAS =====
-  async findAllCategories() {
-    return this.prisma.category.findMany({ orderBy: { nombre: 'asc' } });
+  async findAllCategories(activo?: string) {
+    const where: any = {};
+    if (activo !== 'all') {
+      where.activo = true;
+    }
+    return this.prisma.category.findMany({ 
+      where,
+      orderBy: { nombre: 'asc' } 
+    });
   }
   async createCategory(nombre: string) {
     return this.prisma.category.create({ data: { nombre } });
@@ -16,12 +23,19 @@ export class CatalogsService {
     return this.prisma.category.update({ where: { id }, data: { nombre } });
   }
   async deleteCategory(id: number) {
-    return this.prisma.category.delete({ where: { id } });
+    return this.prisma.category.update({ where: { id }, data: { activo: false } });
   }
 
   // ===== LÍNEAS =====
-  async findAllLines() {
-    return this.prisma.line.findMany({ orderBy: { nombre: 'asc' } });
+  async findAllLines(activo?: string) {
+    const where: any = {};
+    if (activo !== 'all') {
+      where.activo = true;
+    }
+    return this.prisma.line.findMany({ 
+      where,
+      orderBy: { nombre: 'asc' } 
+    });
   }
   async createLine(nombre: string) {
     return this.prisma.line.create({ data: { nombre } });
@@ -30,12 +44,19 @@ export class CatalogsService {
     return this.prisma.line.update({ where: { id }, data: { nombre } });
   }
   async deleteLine(id: number) {
-    return this.prisma.line.delete({ where: { id } });
+    return this.prisma.line.update({ where: { id }, data: { activo: false } });
   }
 
   // ===== MARCAS =====
-  async findAllBrands() {
-    return this.prisma.brand.findMany({ orderBy: { nombre: 'asc' } });
+  async findAllBrands(activo?: string) {
+    const where: any = {};
+    if (activo !== 'all') {
+      where.activo = true;
+    }
+    return this.prisma.brand.findMany({ 
+      where,
+      orderBy: { nombre: 'asc' } 
+    });
   }
   async createBrand(nombre: string) {
     return this.prisma.brand.create({ data: { nombre } });
@@ -44,12 +65,14 @@ export class CatalogsService {
     return this.prisma.brand.update({ where: { id }, data: { nombre } });
   }
   async deleteBrand(id: number) {
-    return this.prisma.brand.delete({ where: { id } });
+    return this.prisma.brand.update({ where: { id }, data: { activo: false } });
   }
 
   // ===== COLORES =====
   async findAllColors() {
-    return this.prisma.color.findMany({ orderBy: { nombre: 'asc' } });
+    return this.prisma.color.findMany({ 
+      orderBy: { nombre: 'asc' } 
+    });
   }
   async createColor(nombre: string, codigo_hex: string) {
     return this.prisma.color.create({ data: { nombre, codigo_hex } });
@@ -58,6 +81,22 @@ export class CatalogsService {
     return this.prisma.color.update({ where: { id }, data: { nombre, codigo_hex } });
   }
   async deleteColor(id: number) {
-    return this.prisma.color.delete({ where: { id } });
+    console.log(`Intentando eliminar color ID: ${id}`);
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        // Limpiamos las relaciones en la tabla intermedia primero por seguridad
+        await tx.colorOnProduct.deleteMany({
+          where: { color_id: id }
+        });
+        
+        // Ahora eliminamos el color base
+        return await tx.color.delete({
+          where: { id }
+        });
+      });
+    } catch (error) {
+      console.error('Error en deleteColor:', error);
+      throw error;
+    }
   }
 }

@@ -34,6 +34,10 @@ export class AuthService {
     };
   }
 
+  /**
+   * @deprecated Usar CLI: `npx ts-node src/seed.ts`
+   * Este método se mantiene temporalmente para compatibilidad con el endpoint /auth/seed.
+   */
   async seedDatabase(): Promise<{ message: string; details: any }> {
     // 1. Roles Homologados
     const rolesDefaults = [
@@ -88,24 +92,16 @@ export class AuthService {
     }
 
     // 4. Catálogos Paramétricos
-    const catData = {
-      categorias: ['Pinturas', 'Esmaltes', 'Barnices'],
-      lineas: ['Arquitectónica', 'Industrial', 'Decorativa'],
-      marcas: ['Pintuco', 'Sherwin-Williams', 'Internacional'],
-    };
-
-    // Mapeo manual para evitar errores de tipado con 'as any'
-    for (const cat of catData.categorias) {
+    for (const cat of ['Pinturas', 'Esmaltes', 'Barnices']) {
       await this.prisma.category.upsert({ where: { nombre: cat }, update: {}, create: { nombre: cat } });
     }
-    for (const lin of catData.lineas) {
+    for (const lin of ['Arquitectónica', 'Industrial', 'Decorativa']) {
       await this.prisma.line.upsert({ where: { nombre: lin }, update: {}, create: { nombre: lin } });
     }
-    for (const mar of catData.marcas) {
+    for (const mar of ['Pintuco', 'Sherwin-Williams', 'Internacional']) {
       await this.prisma.brand.upsert({ where: { nombre: mar }, update: {}, create: { nombre: mar } });
     }
 
-    // Colores
     const colores = [
       { nombre: 'Blanco', codigo_hex: '#FFFFFF' },
       { nombre: 'Negro', codigo_hex: '#000000' },
@@ -164,8 +160,8 @@ export class AuthService {
     }
 
     return {
-      message: 'Seed COLOXI Fase 1.3 ejecutado correctamente',
-      details: 'Roles (ADMIN, GERENTE, JEFE_COMPRA), Usuarios, Catálogos, Parámetros y Producto listos.',
+      message: 'Seed COLOXI ejecutado correctamente',
+      details: 'Roles, Usuarios, Catálogos, Parámetros y Producto listos. Preferir CLI: npx ts-node src/seed.ts',
     };
   }
 }

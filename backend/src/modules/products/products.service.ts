@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { unlink } from 'fs/promises';
+import { join } from 'path';
 import { PrismaService } from '../../prisma/prisma.service';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -26,9 +28,10 @@ export class ProductsService {
     const skip = (page - 1) * limit;
 
     // Filtro dinámico
-    const where: Prisma.ProductWhereInput = {
-      activo: activo,
-    };
+    const where: Prisma.ProductWhereInput = {};
+    if (activo !== 'all') {
+      where.activo = activo as boolean;
+    }
 
     if (search) {
       where.OR = [
@@ -81,7 +84,7 @@ export class ProductsService {
     };
   }
 
-  async findOne(id: string): Promise<any> {
+  async findOne(id: number): Promise<any> {
     const product = await this.prisma.product.findUnique({
       where: { id },
       include: {
@@ -117,7 +120,7 @@ export class ProductsService {
 
   async create(dto: CreateProductDto, userId: string) {
     const { colores_ids, ...productData } = dto;
-    return this.prisma.product.create({
+    const product = await this.prisma.product.create({
       data: {
         ...productData,
         created_by: userId,
@@ -128,9 +131,20 @@ export class ProductsService {
         })
       },
     });
+
+    // Si no se proporcionó código, autogenerar uno con patrón COL-XXX
+    if (!product.codigo) {
+      const autoCode = `COL-${String(product.id).padStart(3, '0')}`;
+      return this.prisma.product.update({
+        where: { id: product.id },
+        data: { codigo: autoCode }
+      });
+    }
+
+    return product;
   }
 
-  async update(id: string, dto: UpdateProductDto, userId: string) {
+  async update(id: number, dto: UpdateProductDto, userId: string) {
     const { colores_ids, ...productData } = dto;
     
     // Si envían array de colores, primero borramos los anteriores y luego insertamos los nuevos
@@ -155,7 +169,7 @@ export class ProductsService {
     });
   }
 
-  async toggleActive(id: string, userId: string) {
+  async toggleActive(id: number, userId: string) {
     const product = await this.prisma.product.findUnique({ where: { id } });
     if (!product) throw new NotFoundException(`Producto ${id} no encontrado`);
     
@@ -167,5 +181,86 @@ export class ProductsService {
         updated_at: new Date()
       }
     });
+  }
+
+  async remove(id: number, userId: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundException(`Producto ${id} no encontrado`);
+    
+    // Soft delete: desactivar en vez de eliminar para preservar historial
+    return this.prisma.product.update({
+      where: { id },
+      data: { 
+        activo: false,
+        updated_by: userId,
+        updated_at: new Date()
+      }
+    });
+  }
+
+  // ─── Gestión de Imágenes ──────────────────────────────────────────────────
+
+  async uploadImage(productId: number, file: Express.Multer.File) {
+    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    if (!product) throw new NotFoundException(`Producto ${productId} no encontrado`);
+
+    // Verificar si ya hay una imagen principal para reemplazarla
+    const existing = await this.prisma.productImage.findFirst({
+      where: { producto_id: productId, es_principal: true },
+    });
+
+    if (existing) {
+      // Eliminar el archivo físico anterior
+      await this.deleteFileFromDisk(existing.url_imagen);
+      // Eliminar el registro antiguo
+      await this.prisma.productImage.delete({ where: { id: existing.id } });
+    }
+
+    // URL pública para acceder al archivo
+    const url = `/static/products/${file.filename}`;
+
+    const imagen = await this.prisma.productImage.create({
+      data: {
+        producto_id: productId,
+        url_imagen: url,
+        es_principal: true,
+        orden_visual: 1,
+        file_size: file.size,
+        mime_type: file.mimetype,
+      },
+    });
+
+    return imagen;
+  }
+
+  async deleteImage(productId: number, imagenId: string) {
+    const imagen = await this.prisma.productImage.findFirst({
+      where: { id: imagenId, producto_id: productId },
+    });
+
+    if (!imagen) throw new NotFoundException(`Imagen ${imagenId} no encontrada para el producto ${productId}`);
+
+    // Eliminar archivo físico del disco
+    await this.deleteFileFromDisk(imagen.url_imagen);
+
+    // Eliminar registro de la BD
+    await this.prisma.productImage.delete({ where: { id: imagenId } });
+
+    return { message: 'Imagen eliminada correctamente' };
+  }
+
+  // ─── Helpers Privados ─────────────────────────────────────────────────────
+
+  private async deleteFileFromDisk(urlImagen: string) {
+    try {
+      // La url_imagen viene como "/static/products/filename.ext"
+      const filename = urlImagen.split('/').pop();
+      if (filename) {
+        const filepath = join(process.cwd(), 'uploads', 'products', filename);
+        await unlink(filepath);
+      }
+    } catch {
+      // Si el archivo ya no existe en disco, ignoramos el error
+    }
   }
 }
