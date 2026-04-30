@@ -87,17 +87,16 @@ export default function Sidebar() {
   const navItems = useMemo(() => {
     const role = user?.rol;
     const items = [
-      { to: '/', label: 'Dashboard', icon: <NavIcons.Dashboard />, roles: ['ADMIN', 'GERENTE'] },
+      { to: '/', label: 'Dashboard', icon: <NavIcons.Dashboard />, roles: ['ADMIN', 'GERENTE', 'JEFE_COMPRA'] },
       { 
         to: '/productos', 
         label: 'Maestro de Productos', 
         icon: <NavIcons.Package />, 
         roles: ['ADMIN', 'GERENTE'] 
       },
-      { to: '/ordenes', label: 'Órdenes de Compra', icon: <NavIcons.Orders />, roles: ['ADMIN', 'GERENTE', 'JEFE_COMPRA'] },
       { to: '/inventario', label: 'Inventario', icon: <NavIcons.Inventory />, roles: ['ADMIN', 'GERENTE', 'JEFE_COMPRA'] },
+      { to: '/ordenes', label: 'Órdenes de Compra', icon: <NavIcons.Orders />, roles: ['ADMIN', 'GERENTE', 'JEFE_COMPRA'] },
       { to: '/catalogos', label: 'Colores', icon: <NavIcons.Palette />, roles: ['ADMIN'] },
-      { to: '/ordenes-revision', label: 'Órdenes en Revisión', icon: <NavIcons.Review />, roles: ['JEFE_COMPRA'] },
       { to: '/usuarios', label: 'Usuarios', icon: <NavIcons.Users />, roles: ['ADMIN'] },
       { to: '/configuracion', label: 'Parámetros Globales', icon: <NavIcons.Settings />, roles: ['ADMIN'] },
     ];

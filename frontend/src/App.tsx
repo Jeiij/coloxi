@@ -10,7 +10,6 @@ import ProductFormPage from './features/products/ProductFormPage';
 import OrderListPage from './features/orders/OrderListPage';
 import NewOrderPage from './features/orders/NewOrderPage';
 import OrderDetailPage from './features/orders/OrderDetailPage';
-import OrdenesRevisionPage from './features/orders/OrdenesRevisionPage';
 import UsersPage from './features/users/UsersPage';
 import SettingsPage from './features/settings/SettingsPage';
 import CatalogsPage from './features/catalogs/CatalogsPage';
@@ -37,7 +36,6 @@ export default function App() {
             <Route path="/inventario" element={<DashboardJefeCompra />} />
             <Route path="/planificador" element={<PlanificadorComprasPage />} />
             <Route path="/ordenes" element={<OrderListPage />} />
-            <Route path="/ordenes-revision" element={<OrdenesRevisionPage />} />
             <Route path="/ordenes/nueva" element={<NewOrderPage />} />
             <Route path="/ordenes/:id" element={<OrderDetailPage />} />
 

@@ -34,4 +34,8 @@ export const orderApi = {
     const { data } = await api.delete(`/ordenes/${orderId}`);
     return data;
   },
+  getPendingCount: async (): Promise<{ count: number }> => {
+    const { data } = await api.get('/ordenes/pendientes/count');
+    return data;
+  },
 };

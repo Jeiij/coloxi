@@ -68,7 +68,7 @@ export default function ProductRowCard({
       <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-6 items-center">
         {metrics.map((metric, idx) => (
           <div key={idx} className="flex flex-col justify-center border-l-2 border-transparent hover:border-gray-100 pl-4 transition-colors">
-            <span className="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1.5 truncate group-hover:text-gray-400 transition-colors">{metric.label}</span>
+            <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-1.5 truncate group-hover:text-gray-700 transition-colors">{metric.label}</span>
             <span className={`text-sm font-black truncate tracking-tight ${metric.valueClass || 'text-gray-800'}`}>
               {metric.value}
             </span>

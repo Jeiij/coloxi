@@ -55,8 +55,26 @@ export class OrdersService {
     const iva = ivaParam ? parseFloat(ivaParam.valor) : 19.0;
     const factor = factorParam ? parseFloat(factorParam.valor) : 1.4;
 
-    // Código único basado en timestamp
-    const codigo = `OC-${Date.now()}`;
+    // Código profesional secuencial: OC-AA-NNNN (ej: OC-26-0001)
+    const year = new Date().getFullYear().toString().slice(-2);
+    const prefix = `OC-${year}-`;
+
+    const lastOrder = await this.prisma.order.findFirst({
+      where: { codigo: { startsWith: prefix } },
+      orderBy: { codigo: 'desc' },
+      select: { codigo: true }
+    });
+
+    let nextNum = 1;
+    if (lastOrder) {
+      const parts = lastOrder.codigo.split('-');
+      const lastNum = parseInt(parts[parts.length - 1], 10);
+      if (!isNaN(lastNum)) {
+        nextNum = lastNum + 1;
+      }
+    }
+
+    const codigo = `${prefix}${nextNum.toString().padStart(4, '0')}`;
 
     const order = await this.prisma.order.create({
       data: {

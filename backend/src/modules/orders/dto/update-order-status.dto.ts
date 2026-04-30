@@ -4,10 +4,10 @@ import { IsString, IsIn } from 'class-validator';
 export class UpdateOrderStatusDto {
   @ApiProperty({
     description: 'Nuevo estado de la orden',
-    enum: ['ENVIADA', 'FINALIZADA'],
+    enum: ['ENVIADA', 'FINALIZADA', 'RECHAZADA'],
     example: 'ENVIADA',
   })
   @IsString()
-  @IsIn(['ENVIADA', 'FINALIZADA'])
+  @IsIn(['ENVIADA', 'FINALIZADA', 'RECHAZADA'])
   estado: string;
 }

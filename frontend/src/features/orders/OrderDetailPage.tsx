@@ -40,10 +40,10 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; b
   RECHAZADA: { 
     label: 'Orden Rechazada', 
     icon: '❌', 
-    bg: 'bg-rose-50', 
-    text: 'text-rose-600', 
-    border: 'border-rose-200',
-    accent: 'bg-rose-500',
+    bg: 'bg-red-50', 
+    text: 'text-red-600', 
+    border: 'border-red-200',
+    accent: 'bg-red-500',
     step: 2 
   },
 };
@@ -502,6 +502,7 @@ export default function OrderDetailPage() {
                   key={d.id}
                   code={d.producto_codigo}
                   name={d.producto_nombre}
+                  image={d.foto_url ? getImageUrl(d.foto_url) : null}
                   tags={tags}
                   metrics={metrics}
                   actions={actions}

@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 
 import { inventoryApi } from '../inventory/inventoryApi';
 import { formatCurrency, getImageUrl } from '../../lib/utils';
@@ -50,9 +51,24 @@ export default function DashboardJefeCompra() {
   const { user } = useAuthStore();
   const canEdit = user?.rol === 'ADMIN' || user?.rol === 'GERENTE';
 
+  const [searchParams] = useSearchParams();
+  const filterParam = searchParams.get('filter');
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'LOW'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'LOW' | 'OUT'>(
+    (filterParam === 'LOW' || filterParam === 'OUT') ? filterParam : 'ALL'
+  );
+
+  // Sincronizar filtro si el parámetro cambia
+  useEffect(() => {
+    if (filterParam === 'LOW' || filterParam === 'OUT') {
+      setStatusFilter(filterParam);
+    } else if (filterParam === 'ALL') {
+      setStatusFilter('ALL');
+    }
+  }, [filterParam]);
+
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
@@ -91,15 +107,7 @@ export default function DashboardJefeCompra() {
     queryFn: () => inventoryApi.getStats(),
   });
 
-  // Compute total inventory value from current page (approximate, real would be backend)
-  const totalValue = useMemo(() => {
-    if (!data?.data) return 0;
-    return data.data.reduce((acc: number, item: any) => {
-      const stock = Number(item.stock_actual) || 0;
-      const cost = Number(item.producto?.costo_unitario_sin_iva) || 0;
-      return acc + stock * cost;
-    }, 0);
-  }, [data]);
+
 
   const filteredData = useMemo(() => {
     if (!data?.data) return [];
@@ -108,6 +116,7 @@ export default function DashboardJefeCompra() {
       const minStock = Number(item.stock_minimo) || 0;
       
       if (statusFilter === 'LOW') return stock > 0 && stock < minStock;
+      if (statusFilter === 'OUT') return stock <= 0;
       return true;
     });
   }, [data, statusFilter]);
@@ -116,14 +125,13 @@ export default function DashboardJefeCompra() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Inventario</h1>
-        <p className="text-gray-500 mt-1">Supervisión de stock y necesidades de abastecimiento</p>
+        <p className="text-gray-500 mt-1">Supervisión de stock</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
         <KpiCard title="Items en Inventario" value={stats?.total_items ?? 0} icon={<KpiIcons.Box />} color="bg-blue-50 text-blue-600" subValue="Control local activo" />
         <KpiCard title="Bajo Mínimo" value={stats?.stock_bajo ?? 0} icon={<KpiIcons.Alert />} color="bg-yellow-50 text-yellow-600" subValue="Requiere atención" />
         <KpiCard title="Agotados" value={stats?.agotados ?? 0} icon={<KpiIcons.Danger />} color="bg-red-50 text-red-600" subValue="Acción inmediata" />
-        <KpiCard title="Valor Invertido" value={formatCurrency(totalValue)} icon={<KpiIcons.Value />} color="bg-emerald-50 text-emerald-600" subValue="Estimado actual" />
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -148,7 +156,7 @@ export default function DashboardJefeCompra() {
               </label>
             )}
             <div className="flex bg-gray-200 p-1 rounded-xl">
-              {(['ALL', 'LOW'] as const).map((s) => (
+              {(['ALL', 'LOW', 'OUT'] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setStatusFilter(s)}
@@ -156,7 +164,7 @@ export default function DashboardJefeCompra() {
                     statusFilter === s ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  {s === 'ALL' ? 'Todos' : 'Stock Bajo'}
+                  {s === 'ALL' ? 'Todos' : s === 'LOW' ? 'Stock Bajo' : 'Agotados'}
                 </button>
               ))}
             </div>
@@ -177,28 +185,54 @@ export default function DashboardJefeCompra() {
               const prod = item.producto;
 
               const tags: ProductRowTag[] = [];
-              if (stock <= 0) {
-                tags.push({ label: 'Agotado', colorClass: 'bg-red-100 text-red-800' });
-              } else if (stock < minStock) {
-                tags.push({ label: 'Bajo Mínimo', colorClass: 'bg-yellow-100 text-yellow-800' });
+              
+              // Estado de habilitación
+              if (item.activo) {
+                tags.push({ label: 'Activo', colorClass: 'bg-emerald-100 text-emerald-800' });
               } else {
-                tags.push({ label: 'Óptimo', colorClass: 'bg-green-100 text-green-800' });
+                tags.push({ label: 'Inhabilitado', colorClass: 'bg-red-100 text-red-800' });
               }
+
+              // Estado de stock (solo si está activo)
+              if (item.activo) {
+                if (stock <= 0) {
+                  tags.push({ label: 'Agotado', colorClass: 'bg-red-100 text-red-800' });
+                } else if (stock < minStock) {
+                  tags.push({ label: 'Bajo Mínimo', colorClass: 'bg-yellow-100 text-yellow-800' });
+                }
+              }
+
               if (prod?.presentacion) {
                 tags.push({ label: prod.presentacion, colorClass: 'bg-gray-100 text-gray-600' });
               }
+
+              const percentage = minStock > 0 ? Math.min((stock / minStock) * 100, 100) : 100;
+              const healthColor = stock <= 0 ? 'bg-red-500' : stock < minStock ? 'bg-yellow-500' : 'bg-emerald-500';
 
               const metrics: ProductRowMetric[] = [
                 { 
                   label: 'Stock Actual', 
                   value: stock.toString(), 
-                  valueClass: stock <= 0 ? 'text-red-600' : stock < minStock ? 'text-yellow-600' : 'text-gray-900' 
+                  valueClass: stock <= 0 ? 'text-red-600 font-black' : stock < minStock ? 'text-yellow-600' : 'text-gray-900' 
                 },
-                { label: 'Stock Mínimo', value: minStock.toString(), valueClass: 'text-gray-500' },
+                { label: 'Stock Mínimo', value: minStock.toString(), valueClass: 'text-gray-400 font-medium' },
                 { 
-                  label: 'Valor Inventario', 
-                  value: formatCurrency(stock * (Number(prod?.costo_unitario_sin_iva) || 0)),
-                  valueClass: 'text-blue-600'
+                  label: 'Salud del Stock', 
+                  value: (
+                    <div className="flex flex-col gap-1.5 min-w-[100px]">
+                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider">
+                        <span className={stock < minStock ? 'text-rose-500' : 'text-emerald-600'}>
+                          {minStock > 0 ? Math.min(Math.round((stock/minStock)*100), 100) : 100}%
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden border border-gray-50">
+                        <div 
+                          className={`h-full transition-all duration-500 ${healthColor}`} 
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  ) as any
                 }
               ];
 

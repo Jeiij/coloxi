@@ -19,11 +19,7 @@ export default function LoginPage() {
       const res = await authApi.login(email, password);
       login(res.access_token, res.user);
       
-      if (res.user.rol === 'JEFE_COMPRA') {
-        navigate('/inventario');
-      } else {
-        navigate('/');
-      }
+      navigate('/');
     } catch {
       setError('Credenciales inválidas. Verifica tu email y contraseña.');
     } finally {

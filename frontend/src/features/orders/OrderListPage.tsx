@@ -9,12 +9,14 @@ const estadoBadge: Record<string, string> = {
   BORRADOR: 'bg-yellow-100 text-yellow-800',
   ENVIADA: 'bg-blue-100 text-blue-800',
   FINALIZADA: 'bg-green-100 text-green-800',
+  RECHAZADA: 'bg-red-100 text-red-800',
 };
 
 const estadoLabel: Record<string, string> = {
   BORRADOR: 'Borrador',
   ENVIADA: 'Pendiente Aprobación',
   FINALIZADA: 'Finalizada',
+  RECHAZADA: 'Rechazada',
 };
 
 export default function OrderListPage() {
@@ -62,6 +64,7 @@ export default function OrderListPage() {
           <option value="BORRADOR">Borrador</option>
           <option value="ENVIADA">Pendiente por Aprobación</option>
           <option value="FINALIZADA">Finalizada</option>
+          <option value="RECHAZADA">Rechazada</option>
         </select>
       </div>
 

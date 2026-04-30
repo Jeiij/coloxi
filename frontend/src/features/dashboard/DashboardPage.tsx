@@ -12,12 +12,14 @@ const estadoBadge: Record<string, string> = {
   BORRADOR: 'bg-yellow-100 text-yellow-800',
   ENVIADA: 'bg-blue-100 text-blue-800',
   FINALIZADA: 'bg-green-100 text-green-800',
+  RECHAZADA: 'bg-red-100 text-red-800',
 };
 
 const estadoLabelMap: Record<string, string> = {
   BORRADOR: 'Borrador',
   ENVIADA: 'Pendiente Aprobación',
   FINALIZADA: 'Finalizada',
+  RECHAZADA: 'Rechazada',
 };
 
 // Iconos SVG minimalistas
@@ -60,19 +62,27 @@ const Icons = {
   )
 };
 
-function KpiCard({ title, value, icon, color, subValue }: { title: string; value: string | number; icon: React.ReactNode; color: string; subValue?: string }) {
-  return (
-    <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 ${color} shadow-inner`}>
-        {icon}
+function KpiCard({ title, value, icon, color, subValue, to }: { title: string; value: string | number; icon: React.ReactNode; color: string; subValue?: string; to?: string }) {
+  const content = (
+    <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col justify-between">
+      <div>
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 ${color} shadow-inner`}>
+          {icon}
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-4xl font-black text-gray-900 tracking-tight">{value}</h3>
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">{title}</p>
+        </div>
       </div>
-      <div className="space-y-1">
-        <h3 className="text-4xl font-black text-gray-900 tracking-tight">{value}</h3>
-        <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">{title}</p>
-        {subValue && <p className="text-xs font-medium text-emerald-500 mt-2">{subValue}</p>}
-      </div>
+      {subValue && <p className="text-xs font-medium text-emerald-500 mt-2">{subValue}</p>}
     </div>
   );
+
+  if (to) {
+    return <Link to={to} className="block group">{content}</Link>;
+  }
+
+  return content;
 }
 
 export default function DashboardPage() {
@@ -84,17 +94,22 @@ export default function DashboardPage() {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     const now = new Date();
-    setCurrentDate(`${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]}`);
+    setCurrentDate(`${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]} de ${now.getFullYear()}`);
   }, []);
 
   const { data: products } = useQuery({ queryKey: ['products-kpi'], queryFn: () => productApi.getAll({ limit: 1 }) });
   const { data: orders } = useQuery({ queryKey: ['orders-kpi'], queryFn: () => orderApi.getAll({ limit: 5 }) });
-  const { data: invStats } = useQuery({ 
-    queryKey: ['inv-stats'], 
+  const { data: invStats } = useQuery({
+    queryKey: ['inv-stats'],
     queryFn: async () => {
       const res = await api.get('/inventario/stats');
       return res.data;
     }
+  });
+  const { data: pendingData } = useQuery({
+    queryKey: ['pending-count'],
+    queryFn: () => orderApi.getPendingCount(),
+    enabled: user?.rol === 'ADMIN' || user?.rol === 'GERENTE'
   });
 
   return (
@@ -103,68 +118,81 @@ export default function DashboardPage() {
       <div className="relative overflow-hidden bg-white rounded-3xl p-8 text-slate-800 shadow-xl shadow-blue-900/[0.03] border border-slate-100 flex items-center group">
         {/* Thick Executive Accent Bar */}
         <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#0284c7] rounded-l-full" />
-        
+
         <div className="relative z-10 w-full">
           <div className="flex items-center gap-3 mb-4">
-             <div className="px-3 py-1 bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-lg border border-slate-100">
-               {currentDate}
-             </div>
-             <div className="w-2 h-2 bg-[#0284c7] rounded-full animate-pulse" />
+            <div className="px-3 py-1 bg-[#0284c7] text-[10px] font-black uppercase tracking-widest text-white rounded-lg shadow-lg shadow-blue-100 border border-blue-500/20">
+              {currentDate}
+            </div>
+            <div className="w-2 h-2 bg-[#0284c7] rounded-full animate-pulse" />
           </div>
-          
+
           <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-tighter text-slate-900">
             Bienvenido, <span className="text-[#0284c7]">{user?.nombre.split(' ')[0]}</span>
           </h1>
-          
-          <p className="text-slate-500 max-w-md text-base leading-relaxed font-medium">
-            Estado de Operaciones: Tienes <span className="text-slate-900 font-black border-b-2 border-[#0284c7]/30">{(invStats?.stock_bajo ?? 0) + (invStats?.agotados ?? 0)} alertas</span> críticas en tu inventario.
+
+          <p className="text-slate-500 max-w-2xl text-base leading-relaxed font-medium">
+            Estado de Operaciones: Tienes <span className="text-rose-600 font-black border-b-2 border-rose-200">{(invStats?.stock_bajo ?? 0) + (invStats?.agotados ?? 0)} alertas críticas en inventario</span> y {pendingData?.count ? <span className="text-[#0284c7] font-black border-b-2 border-sky-200">{pendingData.count} solicitudes pendientes</span> : <span className="text-emerald-600 font-black italic">0 solicitudes pendientes</span>}.
           </p>
         </div>
 
         {/* Decorative element */}
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-slate-50/50 to-transparent pointer-events-none flex items-center justify-end pr-12">
-           <svg className="w-32 h-32 text-slate-100 transform rotate-12" fill="currentColor" viewBox="0 0 24 24">
-             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-           </svg>
+          <svg className="w-32 h-32 text-slate-100 transform rotate-12" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
         </div>
       </div>
 
       {/* KPI Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
-        <KpiCard 
-          title="Maestro Productos" 
-          value={products?.meta?.total ?? '...'} 
-          icon={<Icons.Products />} 
-          color="bg-blue-50 text-blue-600" 
-          subValue="Catálogo Vigente" 
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${user?.rol === 'JEFE_COMPRA' ? 'lg:grid-cols-3' : 'lg:grid-cols-5'} gap-8`}>
+        {(user?.rol === 'ADMIN' || user?.rol === 'GERENTE') && (
+          <KpiCard
+            title="Maestro Productos"
+            value={products?.meta?.total ?? '...'}
+            icon={<Icons.Products />}
+            color="bg-blue-50 text-blue-600"
+            subValue="Catálogo Vigente"
+            to="/productos"
+          />
+        )}
+
+        <KpiCard
+          title="Inventario"
+          value={invStats?.ok ?? 0}
+          icon={<Icons.Success />}
+          color="bg-emerald-50 text-emerald-600"
+          subValue="Stock Óptimo"
+          to="/inventario"
         />
-        <KpiCard 
-          title="Inventario" 
-          value={invStats?.ok ?? 0} 
-          icon={<Icons.Success />} 
-          color="bg-emerald-50 text-emerald-600" 
-          subValue="Stock Óptimo" 
+
+        {(user?.rol === 'ADMIN' || user?.rol === 'GERENTE') && (
+          <KpiCard
+            title="Pendientes"
+            value={pendingData?.count ?? 0}
+            icon={<Icons.Orders />}
+            color="bg-purple-50 text-purple-600"
+            subValue="Órdenes por revisar"
+            to="/ordenes"
+          />
+        )}
+
+        <KpiCard
+          title="Stock Bajo"
+          value={invStats?.stock_bajo ?? 0}
+          icon={<Icons.Alert />}
+          color="bg-[#fbd200]/10 text-[#fbd200]"
+          subValue="Reponer pronto"
+          to="/inventario?filter=LOW"
         />
-        <KpiCard 
-          title="Pendientes" 
-          value={orders?.data?.filter((o: any) => o.estado === 'ENVIADA').length ?? 0} 
-          icon={<Icons.Orders />} 
-          color="bg-purple-50 text-purple-600" 
-          subValue="Órdenes por revisar" 
-        />
-        <KpiCard 
-          title="Stock Bajo" 
-          value={invStats?.stock_bajo ?? 0} 
-          icon={<Icons.Alert />} 
-          color="bg-[#fbd200]/10 text-[#fbd200]" 
-          subValue="Reponer pronto" 
-        />
-        <KpiCard 
-          title="Agotados" 
-          value={invStats?.agotados ?? 0} 
-          icon={<Icons.Agotado />} 
-          color="bg-[#e60411]/10 text-[#e60411]" 
-          subValue="Atención Urgente" 
+
+        <KpiCard
+          title="Agotados"
+          value={invStats?.agotados ?? 0}
+          icon={<Icons.Agotado />}
+          color="bg-[#e60411]/10 text-[#e60411]"
+          subValue="Atención Urgente"
+          to="/inventario?filter=OUT"
         />
       </div>
 
@@ -177,12 +205,12 @@ export default function DashboardPage() {
               Ver todas <span>→</span>
             </Link>
           </div>
-          
+
           <div className="space-y-3">
             {orders?.data?.filter((o: any) => o.estado !== 'BORRADOR').map((o: any) => {
               const actions = (
-                <button 
-                  onClick={() => navigate(`/ordenes/${o.id}`)} 
+                <button
+                  onClick={() => navigate(`/ordenes/${o.id}`)}
                   className="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-bold transition shadow-sm text-center whitespace-nowrap"
                 >
                   Ver detalle →
@@ -225,25 +253,29 @@ export default function DashboardPage() {
               </div>
             </Link>
 
-            <Link to="/productos" className="group flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
-              <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                <Icons.Products />
-              </div>
-              <div>
-                <p className="font-black text-gray-900 tracking-tight">Maestro Productos</p>
-                <p className="text-xs text-gray-500 font-medium">Gestión de catálogo y precios</p>
-              </div>
-            </Link>
+            {(user?.rol === 'ADMIN' || user?.rol === 'GERENTE') && (
+              <Link to="/productos" className="group flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
+                <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                  <Icons.Products />
+                </div>
+                <div>
+                  <p className="font-black text-gray-900 tracking-tight">Maestro Productos</p>
+                  <p className="text-xs text-gray-500 font-medium">Gestión de catálogo y precios</p>
+                </div>
+              </Link>
+            )}
 
-            <Link to="/configuracion" className="group flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all">
-              <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
-                <Icons.Settings />
-              </div>
-              <div>
-                <p className="font-black text-gray-900 tracking-tight">Parámetros Globales</p>
-                <p className="text-xs text-gray-500 font-medium">Tasas, Márgenes y Configuración</p>
-              </div>
-            </Link>
+            {user?.rol === 'ADMIN' && (
+              <Link to="/configuracion" className="group flex items-center gap-4 p-5 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all">
+                <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                  <Icons.Settings />
+                </div>
+                <div>
+                  <p className="font-black text-gray-900 tracking-tight">Parámetros Globales</p>
+                  <p className="text-xs text-gray-500 font-medium">Tasas, Márgenes y Configuración</p>
+                </div>
+              </Link>
+            )}
 
           </div>
         </div>

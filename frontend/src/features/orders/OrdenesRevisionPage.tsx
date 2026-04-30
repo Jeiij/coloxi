@@ -7,6 +7,7 @@ import { formatDate } from '../../lib/utils';
 const estadoBadge: Record<string, string> = {
   ENVIADA: 'bg-blue-100 text-blue-800',
   FINALIZADA: 'bg-green-100 text-green-800',
+  RECHAZADA: 'bg-red-100 text-red-800',
 };
 
 export default function OrdenesRevisionPage() {
