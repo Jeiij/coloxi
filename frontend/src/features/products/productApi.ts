@@ -10,6 +10,14 @@ export const productApi = {
     const { data } = await api.get(`/productos/${id}`);
     return data;
   },
+  getPriceHistory: async (id: string | number): Promise<any[]> => {
+    const { data } = await api.get(`/productos/${id}/historial-precios`);
+    return data;
+  },
+  getGlobalHistory: async (params: Record<string, any> = {}): Promise<PaginatedResult<any>> => {
+    const { data } = await api.get('/productos/auditoria/historial-global', { params });
+    return data;
+  },
   create: async (payload: any): Promise<Product> => {
     const { data } = await api.post('/productos', payload);
     return data;

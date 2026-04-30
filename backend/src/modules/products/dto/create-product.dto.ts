@@ -3,10 +3,6 @@ import { IsString, IsNumber, IsInt, IsOptional, IsArray, IsBoolean, Min } from '
 import { Type } from 'class-transformer';
 
 export class CreateProductDto {
-  @ApiProperty({ example: 'SUPER5-GAL-BL' })
-  @IsOptional()
-  @IsString()
-  codigo?: string;
 
   @ApiProperty({ example: 'Pintura Super5 Galón Blanco' })
   @IsString()
@@ -33,24 +29,25 @@ export class CreateProductDto {
   @Min(0)
   equivalencia_kg: number;
 
-  @ApiProperty({ example: 25000 })
-  @Type(() => Number)
-  @IsNumber()
-  @Min(0)
-  costo_unitario_sin_iva: number;
-
-  @ApiProperty({ example: 45000 })
-  @Type(() => Number)
-  @IsNumber()
-  @Min(0)
-  pvp_colombia: number;
-
-  @ApiPropertyOptional({ example: 10 })
+  @ApiPropertyOptional({ example: 25000 })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  pvp_venezuela?: number;
+  costo_unitario_sin_iva?: number;
+
+  @ApiPropertyOptional({ example: 45000 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  pvp_colombia?: number;
+
+  @ApiProperty({ example: 10 })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  pvp_venezuela: number;
 
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()

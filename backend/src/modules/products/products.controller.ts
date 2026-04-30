@@ -11,6 +11,7 @@ import { ProductsService } from './products.service';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { QueryGlobalHistoryDto } from './dto/query-global-history.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorator';
@@ -27,6 +28,21 @@ export class ProductsController {
   @ApiOperation({ summary: 'Listar productos paginados con filtros' })
   findAll(@Query() query: QueryProductsDto) {
     return this.productsService.findAll(query);
+  }
+
+  @Get('auditoria/historial-global')
+  @Roles('ADMIN', 'GERENTE')
+  @ApiOperation({ summary: 'Obtener historial global de precios con filtros' })
+  getGlobalPriceHistory(@Query() query: QueryGlobalHistoryDto) {
+    return this.productsService.getGlobalPriceHistory(query);
+  }
+
+  @Get(':id/historial-precios')
+  @Roles('ADMIN', 'GERENTE')
+  @ApiOperation({ summary: 'Obtener historial de cambios de precio de un producto' })
+  @ApiParam({ name: 'id', description: 'ID numérico del producto' })
+  getPriceHistory(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.getPriceHistory(id);
   }
 
   @Get(':id')

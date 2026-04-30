@@ -30,6 +30,7 @@ model User {
   system_params    SystemParameter[] @relation("params_updated_by")
   created_products Product[]         @relation("products_created_by")
   updated_products Product[]         @relation("products_updated_by")
+  price_history    ProductPriceHistory[] @relation("price_history_user")
   role             Role              @relation(fields: [rol_id], references: [id])
 
   @@map("usuarios")
@@ -108,6 +109,7 @@ model Product {
   colores                ColorOnProduct[]
   detalle_ordenes        OrderDetail[]
   imagenes               ProductImage[]
+  historial_precios      ProductPriceHistory[]
   inventory_item         InventoryItem?
   categoria              Category?        @relation(fields: [categoria_id], references: [id], onDelete: Restrict)
   creator                User?            @relation("products_created_by", fields: [created_by], references: [id])
@@ -234,4 +236,19 @@ model Audit {
   user             User?    @relation("user_audits", fields: [usuario_id], references: [id])
 
   @@map("auditoria")
+}
+
+model ProductPriceHistory {
+  id                     Int      @id @default(autoincrement())
+  producto_id            Int
+  costo_unitario_sin_iva Decimal  @db.Decimal(14, 4)
+  pvp_colombia           Decimal  @db.Decimal(14, 4)
+  pvp_venezuela          Decimal  @db.Decimal(14, 4)
+  changed_by             String?  @db.Uuid
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  
+  producto               Product  @relation(fields: [producto_id], references: [id], onDelete: Cascade)
+  user                   User?    @relation("price_history_user", fields: [changed_by], references: [id])
+
+  @@map("historial_precios_producto")
 }

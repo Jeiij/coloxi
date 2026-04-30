@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { orderApi } from './orderApi';
 import { formatDate } from '../../lib/utils';
 import OrderRowCard from '../../components/OrderRowCard';
@@ -21,8 +21,18 @@ const estadoLabel: Record<string, string> = {
 
 export default function OrderListPage() {
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const estadoParam = searchParams.get('estado');
+
   const [page, setPage] = useState(1);
-  const [estado, setEstado] = useState('');
+  const [estado, setEstado] = useState(estadoParam || '');
+
+  // Sincronizar filtro si el parámetro cambia
+  useEffect(() => {
+    if (estadoParam !== null) {
+      setEstado(estadoParam);
+    }
+  }, [estadoParam]);
 
   const navigate = useNavigate();
 

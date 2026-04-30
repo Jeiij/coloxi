@@ -5,6 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { QueryGlobalHistoryDto } from './dto/query-global-history.dto';
 import { PaginatedResult } from '../../common/interfaces/paginated-result.interface';
 import { Prisma } from '@prisma/client';
 
@@ -132,21 +133,35 @@ export class ProductsService {
       },
     });
 
-    // Si no se proporcionó código, autogenerar uno con patrón COL-XXX
-    if (!product.codigo) {
-      const autoCode = `COL-${String(product.id).padStart(3, '0')}`;
-      return this.prisma.product.update({
-        where: { id: product.id },
-        data: { codigo: autoCode }
-      });
-    }
-
-    return product;
+    // Autogenerar código secuencial basado en el ID y registrar historial inicial de precios
+    const autoCode = `COL-${String(product.id).padStart(3, '0')}`;
+    return this.prisma.product.update({
+      where: { id: product.id },
+      data: { 
+        codigo: autoCode,
+        historial_precios: {
+          create: {
+            costo_unitario_sin_iva: product.costo_unitario_sin_iva,
+            pvp_colombia: product.pvp_colombia,
+            pvp_venezuela: product.pvp_venezuela,
+            changed_by: userId
+          }
+        }
+      }
+    });
   }
 
   async update(id: number, dto: UpdateProductDto, userId: string) {
     const { colores_ids, ...productData } = dto;
     
+    const oldProduct = await this.prisma.product.findUnique({ where: { id } });
+    if (!oldProduct) throw new NotFoundException(`Producto ${id} no encontrado`);
+
+    const priceChanged = 
+      (productData.costo_unitario_sin_iva !== undefined && Number(productData.costo_unitario_sin_iva) !== Number(oldProduct.costo_unitario_sin_iva)) ||
+      (productData.pvp_colombia !== undefined && Number(productData.pvp_colombia) !== Number(oldProduct.pvp_colombia)) ||
+      (productData.pvp_venezuela !== undefined && Number(productData.pvp_venezuela) !== Number(oldProduct.pvp_venezuela));
+
     // Si envían array de colores, primero borramos los anteriores y luego insertamos los nuevos
     if (colores_ids !== undefined) {
       await this.prisma.colorOnProduct.deleteMany({
@@ -164,8 +179,92 @@ export class ProductsService {
           colores: {
             create: colores_ids.map(colorId => ({ color_id: colorId }))
           }
+        }),
+        ...(priceChanged && {
+          historial_precios: {
+            create: {
+              costo_unitario_sin_iva: productData.costo_unitario_sin_iva ?? oldProduct.costo_unitario_sin_iva,
+              pvp_colombia: productData.pvp_colombia ?? oldProduct.pvp_colombia,
+              pvp_venezuela: productData.pvp_venezuela ?? oldProduct.pvp_venezuela,
+              changed_by: userId
+            }
+          }
         })
       },
+    });
+  }
+
+  async getGlobalPriceHistory(query: QueryGlobalHistoryDto) {
+    const { mes, anio, usuarioId, productoId, page = 1, limit = 20 } = query;
+    const skip = (page - 1) * limit;
+
+    let where: any = {};
+
+    if (usuarioId) {
+      where.changed_by = usuarioId;
+    }
+
+    if (productoId) {
+      where.producto_id = productoId;
+    }
+
+    // Filtro por fecha (mes/año)
+    if (mes || anio) {
+      const yearToUse = anio || new Date().getFullYear();
+      if (mes) {
+        // Rango de un mes específico
+        const startDate = new Date(yearToUse, mes - 1, 1);
+        const endDate = new Date(yearToUse, mes, 1);
+        where.created_at = {
+          gte: startDate,
+          lt: endDate,
+        };
+      } else {
+        // Todo el año
+        const startDate = new Date(yearToUse, 0, 1);
+        const endDate = new Date(yearToUse + 1, 0, 1);
+        where.created_at = {
+          gte: startDate,
+          lt: endDate,
+        };
+      }
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.productPriceHistory.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { created_at: 'desc' },
+        include: {
+          user: { select: { id: true, nombre_completo: true } },
+          producto: { select: { id: true, nombre: true, codigo: true, presentacion: true } }
+        }
+      }),
+      this.prisma.productPriceHistory.count({ where })
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
+    };
+  }
+
+  async getPriceHistory(id: number) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundException(`Producto ${id} no encontrado`);
+    
+    return this.prisma.productPriceHistory.findMany({
+      where: { producto_id: id },
+      orderBy: { created_at: 'desc' },
+      include: {
+        user: { select: { id: true, nombre_completo: true } }
+      }
     });
   }
 

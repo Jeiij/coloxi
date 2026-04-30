@@ -15,6 +15,7 @@ import SettingsPage from './features/settings/SettingsPage';
 import CatalogsPage from './features/catalogs/CatalogsPage';
 import DashboardJefeCompra from './features/dashboard/DashboardJefeCompra';
 import PlanificadorComprasPage from './features/dashboard/PlanificadorComprasPage';
+import PriceHistoryPage from './features/products/PriceHistoryPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ export default function App() {
             <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'GERENTE']} />}>
               <Route path="/productos/nuevo" element={<ProductFormPage />} />
               <Route path="/productos/:id/editar" element={<ProductFormPage />} />
+              <Route path="/historial-precios" element={<PriceHistoryPage />} />
               <Route path="/catalogos" element={<CatalogsPage />} />
             </Route>
 

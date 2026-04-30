@@ -129,7 +129,7 @@ export default function ProductListPage() {
               ];
 
               const actions = (
-                <div className="flex gap-2">
+                <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                   {isJefeCompra ? (
                     <button 
                       onClick={() => setSelectedProductId(p.id)}
@@ -162,6 +162,7 @@ export default function ProductListPage() {
                   metrics={metrics}
                   actions={actions}
                   dimmed={!p.activo}
+                  onClick={() => navigate(`/historial-precios?productoId=${p.id}`)}
                 />
               );
             })}

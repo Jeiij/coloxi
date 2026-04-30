@@ -62,7 +62,14 @@ export default function SettingsPage() {
                         autoFocus
                         type="text"
                         value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
+                        onChange={(e) => {
+                          let val = e.target.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+                          const parts = val.split('.');
+                          if (parts.length > 2) {
+                            val = parts[0] + '.' + parts.slice(1).join('');
+                          }
+                          setEditValue(val);
+                        }}
                         className="w-full px-3 py-1.5 border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-right font-mono font-medium"
                       />
                       <div className="flex gap-2">

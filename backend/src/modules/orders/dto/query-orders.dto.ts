@@ -18,10 +18,10 @@ export class QueryOrdersDto {
   @Max(100)
   limit?: number = 20;
 
-  @ApiPropertyOptional({ enum: ['BORRADOR', 'ENVIADA', 'FINALIZADA'] })
+  @ApiPropertyOptional({ enum: ['BORRADOR', 'ENVIADA', 'FINALIZADA', 'RECHAZADA'] })
   @IsOptional()
   @IsString()
-  @IsIn(['BORRADOR', 'ENVIADA', 'FINALIZADA'])
+  @IsIn(['BORRADOR', 'ENVIADA', 'FINALIZADA', 'RECHAZADA'])
   estado?: string;
 
   @ApiPropertyOptional({ enum: ['COLOMBIA', 'VENEZUELA'] })

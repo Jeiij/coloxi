@@ -324,8 +324,10 @@ export default function DashboardJefeCompra() {
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Stock Minimo</label>
                   <input
                     type="number"
+                    step="1"
                     value={editMin === 0 ? '' : editMin}
-                    onChange={(e) => setEditMin(Number(e.target.value))}
+                    onChange={(e) => setEditMin(parseInt(e.target.value.replace(/\D/g, '')) || 0)}
+                    onKeyDown={(e) => ['e', 'E', '+', '-', '.', ','].includes(e.key) && e.preventDefault()}
                     className="w-full text-2xl font-black text-gray-900 bg-transparent outline-none"
                     placeholder="0"
                   />
@@ -335,8 +337,10 @@ export default function DashboardJefeCompra() {
                   <div className="flex items-center gap-3">
                     <input
                       type="number"
+                      step="1"
                       value={editActual === 0 ? '' : editActual}
-                      onChange={(e) => setEditActual(Number(e.target.value))}
+                      onChange={(e) => setEditActual(parseInt(e.target.value.replace(/\D/g, '')) || 0)}
+                      onKeyDown={(e) => ['e', 'E', '+', '-', '.', ','].includes(e.key) && e.preventDefault()}
                       className="w-full text-2xl font-black text-gray-900 bg-transparent outline-none"
                       placeholder="0"
                     />

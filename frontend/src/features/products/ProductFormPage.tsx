@@ -251,7 +251,15 @@ export default function ProductFormPage() {
 
     const numFields = ['capacidad_gal', 'equivalencia_kg', 'costo_unitario_sin_iva', 'pvp_colombia', 'pvp_venezuela'];
     if (numFields.includes(name)) {
-      value = value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+      // Reemplazar coma por punto y quitar caracteres no numéricos
+      let val = value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+      
+      // Asegurar que solo haya un punto decimal
+      const parts = val.split('.');
+      if (parts.length > 2) {
+        val = parts[0] + '.' + parts.slice(1).join('');
+      }
+      value = val;
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -271,13 +279,15 @@ export default function ProductFormPage() {
       return isNaN(parsed) ? 0 : parsed;
     };
 
+    const { codigo, ...cleanFormData } = formData;
+
     const payload = {
-      ...formData,
+      ...cleanFormData,
       capacidad_gal: toNum(formData.capacidad_gal),
-      equivalencia_kg: formData.equivalencia_kg ? Number(formData.equivalencia_kg) : null,
-      costo_unitario_sin_iva: formData.costo_unitario_sin_iva ? Number(formData.costo_unitario_sin_iva) : null,
-      pvp_colombia: formData.pvp_colombia ? Number(formData.pvp_colombia) : null,
-      pvp_venezuela: formData.pvp_venezuela ? Number(formData.pvp_venezuela) : null,
+      equivalencia_kg: toNum(formData.equivalencia_kg),
+      costo_unitario_sin_iva: toNum(formData.costo_unitario_sin_iva),
+      pvp_colombia: toNum(formData.pvp_colombia),
+      pvp_venezuela: toNum(formData.pvp_venezuela),
       colores_ids: coloresSeleccionados,
     };
 
@@ -410,7 +420,7 @@ export default function ProductFormPage() {
                 <label className="block text-xs font-bold text-purple-600 uppercase tracking-widest mb-1.5">PVP Venezuela</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 font-bold">$</span>
-                  <input type="text" name="pvp_venezuela" value={formData.pvp_venezuela} onChange={handleChange} className="w-full pl-7 pr-4 py-2.5 bg-purple-50/30 border border-purple-200 rounded-xl text-sm font-bold text-purple-800 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none transition-all" placeholder="0" />
+                  <input required type="text" name="pvp_venezuela" value={formData.pvp_venezuela} onChange={handleChange} className="w-full pl-7 pr-4 py-2.5 bg-purple-50/30 border border-purple-200 rounded-xl text-sm font-bold text-purple-800 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none transition-all" placeholder="0" />
                 </div>
               </div>
             </div>
@@ -462,9 +472,19 @@ export default function ProductFormPage() {
         <div className="space-y-6">
           {/* Alertas de error */}
           {saveMutation.isError && (
-            <div className="bg-red-50 p-4 rounded-2xl border border-red-100 text-red-700 text-sm font-medium flex gap-2">
-              <span className="text-lg">⚠️</span>
-              <p>Ocurrió un error al guardar el producto. Revisa los campos obligatorios.</p>
+            <div className="bg-red-50 p-4 rounded-2xl border border-red-100 text-red-700 text-sm font-medium flex flex-col gap-2">
+              <div className="flex gap-2">
+                <span className="text-lg">⚠️</span>
+                <p>Error al guardar el producto:</p>
+              </div>
+              <ul className="list-disc list-inside text-xs mt-1 space-y-1 ml-6">
+                {Array.isArray((saveMutation.error as any)?.response?.data?.error?.message) 
+                  ? (saveMutation.error as any).response.data.error.message.map((msg: string, i: number) => (
+                      <li key={i}>{msg}</li>
+                    ))
+                  : <li>{(saveMutation.error as any)?.response?.data?.error?.message || (saveMutation.error as any)?.message || 'Error desconocido'}</li>
+                }
+              </ul>
             </div>
           )}
           {uploadImageMutation.isError && (

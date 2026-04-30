@@ -20,6 +20,7 @@ export interface ProductRowCardProps {
   metrics: ProductRowMetric[];
   actions?: React.ReactNode;
   dimmed?: boolean; // If true, applies opacity/grayscale to indicate inactive
+  onClick?: () => void;
 }
 
 export default function ProductRowCard({
@@ -30,9 +31,13 @@ export default function ProductRowCard({
   metrics,
   actions,
   dimmed = false,
+  onClick,
 }: ProductRowCardProps) {
   return (
-    <div className={`bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-5 sm:p-6 flex flex-col sm:flex-row gap-6 transition-all duration-500 hover:shadow-xl hover:shadow-black/[0.03] hover:border-blue-100 group ${dimmed ? 'opacity-60 grayscale-[0.5]' : ''}`}>
+    <div 
+      onClick={onClick}
+      className={`bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-sm border border-gray-100 p-5 sm:p-6 flex flex-col sm:flex-row gap-6 transition-all duration-500 hover:shadow-xl hover:shadow-black/[0.03] hover:border-blue-100 group ${dimmed ? 'opacity-60 grayscale-[0.5]' : ''} ${onClick ? 'cursor-pointer hover:bg-gray-50/50' : ''}`}
+    >
       
       {/* 1. Left Section: Image + Info */}
       <div className="flex items-center gap-5 sm:w-1/3 min-w-[280px]">

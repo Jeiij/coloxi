@@ -173,7 +173,7 @@ export default function DashboardPage() {
             icon={<Icons.Orders />}
             color="bg-purple-50 text-purple-600"
             subValue="Órdenes por revisar"
-            to="/ordenes"
+            to="/ordenes?estado=ENVIADA"
           />
         )}
 
