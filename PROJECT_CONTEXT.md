@@ -27,14 +27,14 @@
 
 ## 4. Changelog / Log de Fases
 
-### [Fase 3] - Módulos de Negocio: Catálogos + Productos (En Progreso)
-- **Estado:** Bloque A y B iniciados.
-- **Acciones:** Implementación de Productos (Read-Only) para integración con frontend.
-
-### [Fase 1.3] - Módulo de Productos (Solo Lectura) (20 de Abril, 2026)
+### [Fase 4] - Modernización de Identidad y UX (30 de Abril, 2026)
 - **Estado:** Completada.
-- **Decisiones Relevantes y Ejecución Física:**
-  - Se configuró el prefijo global `/api` para todas las rutas del backend (excluyendo Swagger).
+- **Acciones y Decisiones de Diseño:**
+  - **Identidad de Marca:** Personalización del logo COLOXI (Rojo #df0812 en punto de la "i", Amarillo #fecf00 en diagonal "/" de la "x").
+  - **Sistema de Diseño "Executive Accent":** Implementación de una interfaz Light Normal con acentos en Azul Cielo (#0284c7) y tipografía de alto contraste (Carbon Gray).
+  - **Dashboard:** Refactorización del banner de bienvenida a un estilo minimalista ejecutivo.
+  - **OrderDetail:** Rediseño de la cabecera de órdenes tipo "Hoja Técnica" para máxima legibilidad profesional.
+  - **Sidebar:** Integración de sub-marca "Management v2" y logo estilizado.
   - Se habilitó CORS para permitir peticiones desde el frontend en `http://localhost:5173`.
   - Se implementó `GET /api/productos` con paginación avanzada y 9 filtros dinámicos (categoría, línea, marca, búsqueda por texto, etc.).
   - Se implementó `GET /api/productos/:id` con detalle completo de colores, imágenes y datos de auditoría.
